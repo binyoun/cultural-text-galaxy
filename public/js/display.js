@@ -10,6 +10,16 @@ const MAX_PARTICIPANTS_EXPECTED_DEFAULT = 20;
 const canvas = document.getElementById('scene');
 const hudCount = document.getElementById('participant-count');
 
+// Text was reading too small on a laptop screen. A smaller viewport gets a
+// proportional boost on top of the general size increase below, recomputed
+// on resize, since a viewer sitting close to a laptop needs relatively
+// bigger text than the same scene on a large venue display would.
+const REFERENCE_WIDTH = 1920;
+function computeViewportScaleMultiplier() {
+  return THREE.MathUtils.clamp(REFERENCE_WIDTH / window.innerWidth, 1, 1.6);
+}
+let viewportScaleMultiplier = computeViewportScaleMultiplier();
+
 // Operator tuning: mirrors what the TD side can already tune on its
 // Particle COMP (rate, density, glow), but here it's a hidden show-runner
 // control, never participant-facing. Values load from the URL so a
@@ -167,12 +177,13 @@ function spawnParticle(entry) {
 
     const sprite = new THREE.Sprite(material);
     const aspect = texture.image.width / texture.image.height;
-    const baseScale = 1.6;
+    const baseScale = 2.3;
     // Magnitude has a size, not just a glow: Cheonsang Yeolcha Bunyajido draws
     // brighter stars larger on the page, not just brighter. intensity 1..5 maps
     // to a 0.7x..1.6x size range so a dim entry reads as genuinely smaller.
     const magnitudeScale = 0.7 + ((entry.intensity - 1) / 4) * 0.9;
-    sprite.scale.set(baseScale * aspect * magnitudeScale, baseScale * magnitudeScale, 1);
+    const initialScale = baseScale * magnitudeScale * viewportScaleMultiplier;
+    sprite.scale.set(initialScale * aspect, initialScale, 1);
     sprite.userData.baseOpacity = entry.transparency;
 
     scene.add(sprite);
@@ -238,6 +249,7 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
   composer.setSize(window.innerWidth, window.innerHeight);
+  viewportScaleMultiplier = computeViewportScaleMultiplier();
 });
 
 // Local gravity well: the cursor perturbs nearby stars without touching
@@ -316,9 +328,11 @@ function animate() {
     p.sprite.position.set(pos.x, pos.y, pos.z);
 
     // Volumetric Depth Engine: distance-driven scale + fade so near text
-    // dominates and far text dissolves into the nebula haze.
+    // dominates and far text dissolves into the nebula haze. Floor raised
+    // from 0.35 so distant entries stay legible instead of shrinking away.
     const distToCamera = camera.position.distanceTo(p.sprite.position);
-    const depthScale = THREE.MathUtils.clamp(1.6 - distToCamera / 40, 0.35, 1.6) * p.magnitudeScale;
+    const depthScale =
+      THREE.MathUtils.clamp(1.6 - distToCamera / 40, 0.6, 1.6) * p.magnitudeScale * viewportScaleMultiplier;
     p.sprite.scale.set(p.baseScale * p.aspect * depthScale, p.baseScale * depthScale, 1);
 
     const farFade = THREE.MathUtils.clamp(1.4 - distToCamera / 30, 0.2, 1);
