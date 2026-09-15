@@ -1,0 +1,21 @@
+{
+  "name": "cultural-text-galaxy",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Communal Volumetric Cultural Text Galaxy - participatory web installation",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "nodemon server/index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "multer": "^2.0.0",
+    "sharp": "^0.35.4",
+    "socket.io": "^4.7.5",
+    "three": "^0.169.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}

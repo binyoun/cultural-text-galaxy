@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Communal Volumetric Cultural Text Galaxy</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "/vendor/three/build/three.module.js",
+        "three/addons/": "/vendor/three/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body class="display">
+  <canvas id="scene"></canvas>
+  <div id="hud">
+    <span id="participant-count">0</span> participants
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="module" src="/js/display.js"></script>
+</body>
+</html>
