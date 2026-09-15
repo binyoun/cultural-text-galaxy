@@ -110,6 +110,44 @@
     box-shadow: 0 0 8px 1px var(--accent);
   }
 
+  .page-toc {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 10px 24px;
+    background: rgba(3, 2, 9, 0.92);
+    backdrop-filter: blur(6px);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .page-toc a {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--muted);
+    padding: 6px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .page-toc a:hover {
+    color: var(--text);
+    border-color: var(--accent);
+  }
+
+  .page-toc a .toc-num {
+    color: var(--accent);
+    margin-right: 6px;
+  }
+
   main {
     max-width: 900px;
     margin: 0 auto;
@@ -336,6 +374,12 @@
   </div>
 </nav>
 
+<div class="page-toc no-print">
+  <a href="#research"><span class="toc-num">1</span>Research Foundation</a>
+  <a href="#instructions"><span class="toc-num">2</span>Instruction Card</a>
+  <a href="#template"><span class="toc-num">3</span>Personal Template</a>
+</div>
+
 <main>
   <section id="concept-section">
     <h1>Writing Guide</h1>
@@ -355,7 +399,7 @@
       built on a form that already does exactly that.
     </div>
 
-    <h2>Research Foundation: Cheonsang Yeolcha Bunyajido (천상열차분야지도)</h2>
+    <h2 id="research">Research Foundation: Cheonsang Yeolcha Bunyajido (천상열차분야지도)</h2>
     <p style="font-size:14px;">
       Two different real objects share this name. The original is a stone
       star chart, carved December 1395, King Taejo's fourth year as
@@ -637,7 +681,7 @@
     </div>
   </section>
 
-  <section>
+  <section id="instructions">
     <h2>Instruction Card</h2>
     <p>Print this at table signage size. Plain language, minimal text, works for participants across languages.</p>
     <div class="card">
@@ -664,7 +708,7 @@
     </div>
   </section>
 
-  <section>
+  <section id="template">
     <h2>Personal Template</h2>
     <p>
       One of these per participant, not a shared sheet. Set the ray count to
