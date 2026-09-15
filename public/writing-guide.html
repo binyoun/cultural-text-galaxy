@@ -58,32 +58,33 @@
     margin: 0 0 18px;
   }
 
+  h3.block-title {
+    font-size: 17px;
+    margin: 28px 0 10px;
+    color: var(--text);
+  }
+
   p { color: #d3d6f2; }
 
-  .precedent {
+  .pipeline {
     padding: 18px 20px;
     border: 1px solid var(--line);
     border-radius: 10px;
     background: var(--bg-alt);
-    margin-bottom: 14px;
-  }
-
-  .precedent .tag {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--accent);
-    margin-bottom: 6px;
-  }
-
-  .precedent h3 {
-    margin: 0 0 8px;
-    font-size: 16px;
-  }
-
-  .precedent p {
-    margin: 0;
+    margin: 18px 0;
     font-size: 14px;
+    color: var(--muted);
+  }
+
+  .pipeline strong { color: var(--text); }
+
+  .research-block {
+    margin-bottom: 22px;
+  }
+
+  .research-block p {
+    font-size: 14px;
+    margin: 0 0 10px;
   }
 
   .print-btn {
@@ -145,8 +146,23 @@
     background: #ffffff;
     border-radius: 14px;
     padding: 24px;
-    max-width: 640px;
+    max-width: 480px;
     margin: 20px auto 0;
+  }
+
+  .ray-control {
+    text-align: center;
+    margin-bottom: 16px;
+    color: #333;
+    font-size: 14px;
+  }
+
+  .ray-control input {
+    width: 60px;
+    padding: 6px 8px;
+    font-size: 14px;
+    margin: 0 8px;
+    text-align: center;
   }
 
   #underlaySvg {
@@ -163,7 +179,7 @@
   }
 
   @media print {
-    nav, .no-print, #concept-section { display: none !important; }
+    nav, .no-print { display: none !important; }
 
     body { background: #fff; color: #000; }
 
@@ -179,45 +195,99 @@
 <main>
   <section id="concept-section">
     <h1>Writing Guide</h1>
-    <h2>Research Foundation</h2>
-    <p>
-      The radial formation is not decorative. It is drawn from a specific
-      precedent that fits the workshop's own concept: naming as a way of
-      claiming a place in the sky.
-    </p>
+    <h2>How a name becomes a photograph becomes two things</h2>
+    <div class="pipeline">
+      Each participant writes their own name on their own paper, following
+      this guide, then photographs it once. <strong>That one photograph</strong>
+      goes two places: into TouchDesigner for their individual piece, and
+      into the shared pool for the communal work shown at the workshop and
+      kept afterward as documentation. The writing formation has to hold up
+      at both scales, a single name on its own, and dozens of names together,
+      so it is built on a form that already does exactly that.
+    </div>
 
-    <div class="precedent">
-      <div class="tag">Primary reference</div>
-      <h3>Cheonsang Yeolcha Bunyajido (천상열차분야지도)</h3>
+    <h2>Research Foundation: Cheonsang Yeolcha Bunyajido (천상열차분야지도)</h2>
+
+    <div class="research-block">
+      <h3 class="block-title">A chart rebuilt after loss</h3>
       <p>
-        A 14th-century Korean stone star chart. It places the celestial pole
-        at the center of the stone and arranges constellations in rings
-        radiating outward from it. It was carved under a Joseon king partly
-        as a claim of sovereignty over the sky itself. A center point with
-        names radiating outward carries the same structure, and the same
-        idea: naming what is yours to name.
+        Cheonsang Yeolcha Bunyajido is a Korean star chart carved in stone
+        around 1395, in the first years of the Joseon dynasty. It was not
+        drawn from scratch. It reproduces an older chart said to date to
+        Goguryeo, whose original stone was lost, reportedly during the fall
+        of the kingdom. What survived was a paper rubbing. Joseon court
+        astronomers used that rubbing to reconstruct the chart, correcting
+        star positions for the centuries that had passed since the original
+        observations, then re-carved it in stone. A record of the sky
+        disappeared with a kingdom and was carried forward anyway, on
+        paper, until someone had the authority and the occasion to put it
+        back into permanent form. That is close to what this workshop is
+        already asking of its participants.
       </p>
     </div>
 
-    <div class="precedent">
-      <div class="tag">Secondary reference</div>
-      <h3>Fan and pedigree charts</h3>
+    <div class="research-block">
+      <h3 class="block-title">Field allocation: sky as claimed territory</h3>
       <p>
-        Circular genealogy diagrams that radiate outward from a person
-        through their family line. Closer to the poem's own list of names,
-        family, neighbors, and distant relatives, than a pure star chart is.
+        The chart's own name contains its method. Bunya (분야, 分野) means
+        "field allocation," a system used across East Asian astronomy that
+        divides the sky into sectors and assigns each one to a region of
+        earth below it. A patch of stars is not just a patch of stars, it
+        corresponds to a place, and by extension to the people and the
+        authority tied to that place. Mapping the sky was a way of mapping,
+        and claiming, the ground. This is the same move ISEA's Charting
+        Constellations pillar asks for, reshaping geography and identity
+        through a digital, multidimensional lens, except Cheonsang Yeolcha
+        Bunyajido did it in stone six hundred years earlier. Applied to this
+        workshop: each participant's name is their own field allocation, a
+        claimed patch of sky that is theirs by the act of writing it.
       </p>
     </div>
 
-    <div class="precedent">
-      <div class="tag">Supporting principle</div>
-      <h3>The non-hierarchical circle</h3>
+    <div class="research-block">
+      <h3 class="block-title">A claim of legitimacy through naming the sky</h3>
       <p>
-        Writing in a ring, with no first or last position, is a documented
-        pattern across many communal and ritual practices, used specifically
-        so no name outranks another. It supports the workshop's own claim
-        that different scripts and languages coexist without being flattened
-        into a single order.
+        Re-carving the chart was also a political act. A new dynasty
+        demonstrating command over astronomical knowledge, the movements of
+        heaven, was a recognized way of asserting the legitimacy of its rule.
+        Naming and ordering the stars was not neutral observation, it was a
+        declaration of authority. Set against sōshi-kaimei, the colonial
+        policy that stripped Koreans of their own names, the contrast is
+        direct: one system used naming to assert power over a people, the
+        other used naming the sky to assert a people's own authority. Yoon
+        Dong-ju's poem sits on the second side of that line. So does this
+        workshop.
+      </p>
+    </div>
+
+    <div class="research-block">
+      <h3 class="block-title">Structure: one pole, many named stars</h3>
+      <p>
+        The chart is organized around a fixed point near the center,
+        corresponding to the celestial pole, with the twenty-eight lunar
+        mansions and hundreds of individually catalogued constellations
+        arranged in bands radiating outward from it. Every star that mattered
+        was named individually and placed in relation to that center, not
+        scattered at random and not lined up in a row. This is the direct
+        source for the workshop's own radial writing form: a fixed, empty
+        center, and each name given its own position, its own ray, radiating
+        outward from that shared point.
+      </p>
+    </div>
+
+    <div class="research-block">
+      <h3 class="block-title">From one chart to many</h3>
+      <p>
+        A single participant's name, written with each character or syllable
+        placed along its own ray around a personal center, is a small
+        Cheonsang Yeolcha Bunyajido of one person, their own field allocation,
+        their own claimed sky. That photograph is what TouchDesigner
+        processes individually. When every participant's chart is gathered
+        for the communal work, the structure repeats at a larger scale,
+        many personal skies contributing to one shared one, which is the
+        same relationship the original chart has to the twelve field
+        allocations, one system, many claimed territories, held together
+        without erasing any of them.
       </p>
     </div>
   </section>
@@ -227,15 +297,15 @@
     <p>Print this at table signage size. Plain language, minimal text, works for participants across languages.</p>
     <div class="card">
       <div class="eyebrow">Communal Volumetric Cultural Text Galaxy</div>
-      <h3>How to add your name to the sky</h3>
+      <h3>How to write your name</h3>
       <ol>
-        <li>Find an open ray on the circle.</li>
-        <li>Write your name along it. Let the top of your letters point outward, away from the center.</li>
+        <li>Mark a small center point on your paper. Leave it empty. It is your fixed point, your pole star.</li>
+        <li>Write your name one character or syllable at a time, each one on its own ray, spreading outward from that center like a clock face.</li>
+        <li>Let the top of each character point outward, away from the center.</li>
         <li>Write in your own language, your own script. Nothing here needs translating.</li>
-        <li>Leave the center clear. It stays open, shared by everyone.</li>
-        <li>We will photograph your name and send it into the galaxy on screen.</li>
+        <li>When you are done, photograph the whole page. This one photograph becomes both your individual piece and part of the shared galaxy.</li>
       </ol>
-      <div class="note">Inspired by Cheonsang Yeolcha Bunyajido, a centuries-old Korean star chart, and Yoon Dong-ju's 1941 poem "Counting the Stars at Night."</div>
+      <div class="note">Inspired by Cheonsang Yeolcha Bunyajido, a Korean star chart carved in 1395, and Yoon Dong-ju's 1941 poem "Counting the Stars at Night."</div>
     </div>
     <div class="no-print" style="text-align:center;">
       <button class="print-btn" onclick="window.print()">Print this page</button>
@@ -243,14 +313,18 @@
   </section>
 
   <section>
-    <h2>Underlay Template</h2>
+    <h2>Personal Template</h2>
     <p>
-      A shared master sheet, not a per-person handout. Place a blank sheet
-      over this guide (or scale it up to your final communal sheet size) so
-      each participant writes along an open ray in turn. Twenty rays, one
-      per expected participant. The center stays empty.
+      One of these per participant, not a shared sheet. Set the ray count to
+      match how many characters or syllables are in the name being written,
+      then print or trace from it directly.
     </p>
     <div class="underlay-wrap">
+      <div class="ray-control no-print">
+        Characters in the name:
+        <input type="number" id="rayCountInput" min="2" max="14" value="4" />
+        <span id="rayCountLabel"></span>
+      </div>
       <svg id="underlaySvg" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg"></svg>
     </div>
     <p class="scale-note">Scale bar shown at bottom right. Print or project at any size, the proportions stay correct.</p>
@@ -263,11 +337,11 @@
 <script>
 (function () {
   var svg = document.getElementById('underlaySvg');
+  var input = document.getElementById('rayCountInput');
   var ns = 'http://www.w3.org/2000/svg';
   var cx = 500, cy = 500;
-  var innerR = 90;   // keep-clear zone around the center
-  var outerR = 460;  // writing boundary near the sheet edge
-  var rayCount = 20; // matches MAX_PARTICIPANTS_EXPECTED in server/index.js
+  var innerR = 60;   // keep-clear zone around the personal center point
+  var outerR = 420;  // writing boundary near the sheet edge
 
   function el(tag, attrs) {
     var e = document.createElementNS(ns, tag);
@@ -275,67 +349,79 @@
     return e;
   }
 
-  // outer boundary + inner keep-clear circle
-  svg.appendChild(el('circle', { cx: cx, cy: cy, r: outerR, fill: 'none', stroke: '#ccc', 'stroke-width': 2 }));
-  svg.appendChild(el('circle', { cx: cx, cy: cy, r: innerR, fill: 'none', stroke: '#bbb', 'stroke-width': 2, 'stroke-dasharray': '6 6' }));
+  function render(rayCount) {
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
 
-  for (var i = 0; i < rayCount; i++) {
-    var angle = (-90 + (360 / rayCount) * i) * (Math.PI / 180);
-    var x1 = cx + innerR * Math.cos(angle);
-    var y1 = cy + innerR * Math.sin(angle);
-    var x2 = cx + outerR * Math.cos(angle);
-    var y2 = cy + outerR * Math.sin(angle);
+    svg.appendChild(el('circle', { cx: cx, cy: cy, r: outerR, fill: 'none', stroke: '#ccc', 'stroke-width': 2 }));
+    svg.appendChild(el('circle', { cx: cx, cy: cy, r: innerR, fill: 'none', stroke: '#bbb', 'stroke-width': 2, 'stroke-dasharray': '6 6' }));
 
-    svg.appendChild(el('line', {
-      x1: x1, y1: y1, x2: x2, y2: y2,
-      stroke: i === 0 ? '#6c7bff' : '#d8d8e8',
-      'stroke-width': i === 0 ? 3 : 1.5
+    for (var i = 0; i < rayCount; i++) {
+      var angle = (-90 + (360 / rayCount) * i) * (Math.PI / 180);
+      var x1 = cx + innerR * Math.cos(angle);
+      var y1 = cy + innerR * Math.sin(angle);
+      var x2 = cx + outerR * Math.cos(angle);
+      var y2 = cy + outerR * Math.sin(angle);
+
+      svg.appendChild(el('line', {
+        x1: x1, y1: y1, x2: x2, y2: y2,
+        stroke: i === 0 ? '#6c7bff' : '#d8d8e8',
+        'stroke-width': i === 0 ? 3 : 1.5
+      }));
+
+      var lx = cx + (outerR + 26) * Math.cos(angle);
+      var ly = cy + (outerR + 26) * Math.sin(angle);
+      var label = el('text', {
+        x: lx, y: ly, fill: '#999', 'font-size': 16,
+        'text-anchor': 'middle', 'dominant-baseline': 'middle'
+      });
+      label.textContent = i + 1;
+      svg.appendChild(label);
+    }
+
+    var startAngle = -90 * (Math.PI / 180);
+    var arrowR = (innerR + outerR) / 2;
+    var ax = cx + arrowR * Math.cos(startAngle);
+    var ay = cy + arrowR * Math.sin(startAngle);
+    svg.appendChild(el('path', {
+      d: 'M ' + (ax - 8) + ' ' + (ay + 10) + ' L ' + ax + ' ' + (ay - 6) + ' L ' + (ax + 8) + ' ' + (ay + 10),
+      fill: 'none', stroke: '#6c7bff', 'stroke-width': 2.5,
+      'stroke-linejoin': 'round', 'stroke-linecap': 'round'
     }));
 
-    var lx = cx + (outerR + 22) * Math.cos(angle);
-    var ly = cy + (outerR + 22) * Math.sin(angle);
-    var label = el('text', {
-      x: lx, y: ly, fill: '#999', 'font-size': 14,
+    var startLabel = el('text', {
+      x: cx, y: cy - outerR + 40, fill: '#6c7bff', 'font-size': 14,
+      'text-anchor': 'middle', 'font-weight': 'bold'
+    });
+    startLabel.textContent = 'first character, write outward';
+    svg.appendChild(startLabel);
+
+    var centerLabel = el('text', {
+      x: cx, y: cy, fill: '#aaa', 'font-size': 13,
       'text-anchor': 'middle', 'dominant-baseline': 'middle'
     });
-    label.textContent = i + 1;
-    svg.appendChild(label);
+    centerLabel.textContent = 'pole, keep clear';
+    svg.appendChild(centerLabel);
+
+    var barX = cx + outerR - 120;
+    var barY = cy + outerR + 60;
+    svg.appendChild(el('line', { x1: barX, y1: barY, x2: barX + 100, y2: barY, stroke: '#999', 'stroke-width': 2 }));
+    svg.appendChild(el('line', { x1: barX, y1: barY - 6, x2: barX, y2: barY + 6, stroke: '#999', 'stroke-width': 2 }));
+    svg.appendChild(el('line', { x1: barX + 100, y1: barY - 6, x2: barX + 100, y2: barY + 6, stroke: '#999', 'stroke-width': 2 }));
+    var barLabel = el('text', { x: barX + 50, y: barY + 20, fill: '#999', 'font-size': 12, 'text-anchor': 'middle' });
+    barLabel.textContent = 'reference unit';
+    svg.appendChild(barLabel);
   }
 
-  // orientation cue on ray 1: arrow + example word pointing outward
-  var startAngle = -90 * (Math.PI / 180);
-  var arrowR = (innerR + outerR) / 2;
-  var ax = cx + arrowR * Math.cos(startAngle);
-  var ay = cy + arrowR * Math.sin(startAngle);
-  var arrowHead = el('path', {
-    d: 'M ' + (ax - 8) + ' ' + (ay + 10) + ' L ' + ax + ' ' + (ay - 6) + ' L ' + (ax + 8) + ' ' + (ay + 10),
-    fill: 'none', stroke: '#6c7bff', 'stroke-width': 2.5,
-    'stroke-linejoin': 'round', 'stroke-linecap': 'round'
-  });
-  svg.appendChild(arrowHead);
-  var startLabel = el('text', {
-    x: cx, y: cy - outerR + 40, fill: '#6c7bff', 'font-size': 13,
-    'text-anchor': 'middle', 'font-weight': 'bold'
-  });
-  startLabel.textContent = 'write outward, this direction';
-  svg.appendChild(startLabel);
+  function readAndRender() {
+    var n = parseInt(input.value, 10);
+    if (isNaN(n) || n < 2) n = 2;
+    if (n > 14) n = 14;
+    document.getElementById('rayCountLabel').textContent = n + ' rays';
+    render(n);
+  }
 
-  var centerLabel = el('text', {
-    x: cx, y: cy, fill: '#aaa', 'font-size': 12,
-    'text-anchor': 'middle', 'dominant-baseline': 'middle'
-  });
-  centerLabel.textContent = 'keep clear';
-  svg.appendChild(centerLabel);
-
-  // scale bar: 10cm reference, callers rescale the printed sheet as needed
-  var barX = cx + outerR - 120;
-  var barY = cy + outerR + 60;
-  svg.appendChild(el('line', { x1: barX, y1: barY, x2: barX + 100, y2: barY, stroke: '#999', 'stroke-width': 2 }));
-  svg.appendChild(el('line', { x1: barX, y1: barY - 6, x2: barX, y2: barY + 6, stroke: '#999', 'stroke-width': 2 }));
-  svg.appendChild(el('line', { x1: barX + 100, y1: barY - 6, x2: barX + 100, y2: barY + 6, stroke: '#999', 'stroke-width': 2 }));
-  var barLabel = el('text', { x: barX + 50, y: barY + 20, fill: '#999', 'font-size': 12, 'text-anchor': 'middle' });
-  barLabel.textContent = 'reference unit';
-  svg.appendChild(barLabel);
+  input.addEventListener('input', readAndRender);
+  readAndRender();
 })();
 </script>
 </body>
