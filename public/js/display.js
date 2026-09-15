@@ -91,7 +91,11 @@ function spawnParticle(entry) {
     const sprite = new THREE.Sprite(material);
     const aspect = texture.image.width / texture.image.height;
     const baseScale = 1.6;
-    sprite.scale.set(baseScale * aspect, baseScale, 1);
+    // Magnitude has a size, not just a glow: Cheonsang Yeolcha Bunyajido draws
+    // brighter stars larger on the page, not just brighter. intensity 1..5 maps
+    // to a 0.7x..1.6x size range so a dim entry reads as genuinely smaller.
+    const magnitudeScale = 0.7 + ((entry.intensity - 1) / 4) * 0.9;
+    sprite.scale.set(baseScale * aspect * magnitudeScale, baseScale * magnitudeScale, 1);
     sprite.userData.baseOpacity = entry.transparency;
 
     scene.add(sprite);
@@ -101,6 +105,7 @@ function spawnParticle(entry) {
       orbit: createOrbitState(Math.random()),
       baseScale,
       aspect,
+      magnitudeScale,
     });
 
     updateNebulaDrawRange();
@@ -216,7 +221,7 @@ function animate() {
     // Volumetric Depth Engine: distance-driven scale + fade so near text
     // dominates and far text dissolves into the nebula haze.
     const distToCamera = camera.position.distanceTo(p.sprite.position);
-    const depthScale = THREE.MathUtils.clamp(1.6 - distToCamera / 40, 0.35, 1.6);
+    const depthScale = THREE.MathUtils.clamp(1.6 - distToCamera / 40, 0.35, 1.6) * p.magnitudeScale;
     p.sprite.scale.set(p.baseScale * p.aspect * depthScale, p.baseScale * depthScale, 1);
 
     const farFade = THREE.MathUtils.clamp(1.4 - distToCamera / 30, 0.2, 1);

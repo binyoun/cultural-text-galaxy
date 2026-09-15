@@ -821,38 +821,8 @@
   readAndRender();
 })();
 
-(function () {
-  var container = document.getElementById('navLinks');
-  var polyline = document.getElementById('navPolyline');
-  if (!container || !polyline) return;
-
-  function draw() {
-    var dots = container.querySelectorAll('.star-dot');
-    var containerRect = container.getBoundingClientRect();
-    var points = [];
-    var tops = [];
-
-    dots.forEach(function (dot) {
-      var r = dot.getBoundingClientRect();
-      var x = r.left + r.width / 2 - containerRect.left;
-      var y = r.top + r.height / 2 - containerRect.top;
-      points.push(x + ',' + y);
-      tops.push(r.top);
-    });
-
-    var singleRow = tops.length > 0 && (Math.max.apply(null, tops) - Math.min.apply(null, tops)) < 4;
-    polyline.setAttribute('points', singleRow ? points.join(' ') : '');
-  }
-
-  var resizeTimer;
-  window.addEventListener('resize', function () {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(draw, 100);
-  });
-
-  window.addEventListener('load', draw);
-  draw();
-})();
 </script>
+<script src="/js/nav.js"></script>
+<script>wireConstellations([['navLinks', 'navPolyline']]);</script>
 </body>
 </html>

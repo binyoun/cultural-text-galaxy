@@ -19,6 +19,98 @@ body.display {
   height: 100vh;
 }
 
+#starfield {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  display: block;
+}
+
+body.mobile > * {
+  position: relative;
+  z-index: 1;
+}
+
+nav.site-nav {
+  display: flex;
+  justify-content: center;
+  padding: 20px 24px;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #9aa1c9;
+}
+
+nav.site-nav .links {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+nav.site-nav .links svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+nav.site-nav .links svg polyline {
+  fill: none;
+  stroke: #8fd6ff;
+  stroke-width: 1;
+  opacity: 0.35;
+}
+
+nav.site-nav .links a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin-left: 22px;
+  padding-top: 12px;
+  text-decoration: none;
+  color: #9aa1c9;
+}
+
+nav.site-nav .links a:first-child {
+  margin-left: 0;
+}
+
+nav.site-nav .links a .star-dot {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #9aa1c9;
+  box-shadow: 0 0 4px #9aa1c9;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+nav.site-nav .links a:hover {
+  color: #eef0ff;
+}
+
+nav.site-nav .links a:hover .star-dot {
+  background: #8fd6ff;
+  box-shadow: 0 0 10px 2px #8fd6ff;
+}
+
+nav.site-nav .links a.current {
+  color: #eef0ff;
+}
+
+nav.site-nav .links a.current .star-dot {
+  background: #8fd6ff;
+  box-shadow: 0 0 8px 1px #8fd6ff;
+}
+
 #hud {
   position: fixed;
   top: 20px;

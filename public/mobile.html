@@ -4,9 +4,25 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>Add Your Text to the Galaxy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body class="mobile">
+  <canvas id="starfield"></canvas>
+  <nav class="site-nav">
+    <div class="links" id="navLinks">
+      <svg id="navConstellation"><polyline id="navPolyline" points=""></polyline></svg>
+      <a href="/"><span class="star-dot"></span>Home</a>
+      <a href="/#about"><span class="star-dot"></span>About</a>
+      <a href="/#concept"><span class="star-dot"></span>Concept</a>
+      <a href="/#isea"><span class="star-dot"></span>ISEA 2026</a>
+      <a href="/#organizers"><span class="star-dot"></span>Organizers</a>
+      <a href="/writing-guide.html"><span class="star-dot"></span>Writing Guide</a>
+      <a href="/mobile.html" class="current"><span class="star-dot"></span>Add Your Text</a>
+      <a href="/display.html"><span class="star-dot"></span>View the Galaxy</a>
+    </div>
+  </nav>
   <main>
     <h1>Add your text to the galaxy</h1>
 
@@ -72,5 +88,8 @@
   </main>
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/mobile.js"></script>
+  <script src="/js/starfield.js"></script>
+  <script src="/js/nav.js"></script>
+  <script>wireConstellations([['navLinks', 'navPolyline']]);</script>
 </body>
 </html>
