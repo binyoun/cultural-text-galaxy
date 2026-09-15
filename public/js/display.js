@@ -59,6 +59,24 @@ const bloomPass = new UnrealBloomPass(
 );
 composer.addPass(bloomPass);
 
+// THREE.PointsMaterial renders as flat squares with no sprite texture, a
+// soft round mask is what turns "dust" from hard little blue crumbs into
+// actual glowing motes.
+function createDotTexture() {
+  const size = 32;
+  const canvasEl = document.createElement('canvas');
+  canvasEl.width = size;
+  canvasEl.height = size;
+  const ctx = canvasEl.getContext('2d');
+  const grad = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+  grad.addColorStop(0, 'rgba(255,255,255,1)');
+  grad.addColorStop(0.5, 'rgba(255,255,255,0.4)');
+  grad.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, size, size);
+  return new THREE.CanvasTexture(canvasEl);
+}
+
 // Background nebula: diffuse typographic haze that thickens with participation.
 const nebulaGeometry = new THREE.BufferGeometry();
 const NEBULA_MAX = 1200;
@@ -72,10 +90,11 @@ for (let i = 0; i < NEBULA_MAX; i++) {
 }
 nebulaGeometry.setAttribute('position', new THREE.BufferAttribute(nebulaPositions, 3));
 const nebulaMaterial = new THREE.PointsMaterial({
+  map: createDotTexture(),
   color: 0x6677ff,
-  size: 0.06,
+  size: 0.14,
   transparent: true,
-  opacity: 0.15,
+  opacity: 0.25,
   blending: THREE.AdditiveBlending,
   depthWrite: false,
 });
