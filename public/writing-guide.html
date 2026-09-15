@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Writing Guide, Cultural Text Galaxy</title>
+<style>
+  :root {
+    --bg: #030209;
+    --bg-alt: #0a0c1e;
+    --line: #23264a;
+    --text: #eef0ff;
+    --muted: #9aa1c9;
+    --accent: #8fd6ff;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.6;
+  }
+
+  a { color: var(--accent); }
+
+  nav {
+    padding: 20px 24px;
+    max-width: 900px;
+    margin: 0 auto;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px 100px;
+  }
+
+  section {
+    padding: 40px 0;
+    border-top: 1px solid var(--line);
+  }
+
+  h1 {
+    font-size: 28px;
+    margin: 0 0 8px;
+  }
+
+  h2 {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 18px;
+  }
+
+  p { color: #d3d6f2; }
+
+  .precedent {
+    padding: 18px 20px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--bg-alt);
+    margin-bottom: 14px;
+  }
+
+  .precedent .tag {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .precedent h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+  }
+
+  .precedent p {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  .print-btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #041018;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+  }
+
+  /* --- Instruction card (screen preview) --- */
+  .card {
+    background: #ffffff;
+    color: #111;
+    border-radius: 14px;
+    padding: 40px;
+    max-width: 480px;
+    margin: 20px auto 0;
+  }
+
+  .card .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #6c7bff;
+    margin-bottom: 6px;
+  }
+
+  .card h3 {
+    font-size: 22px;
+    margin: 0 0 18px;
+  }
+
+  .card ol {
+    padding-left: 20px;
+    margin: 0 0 20px;
+  }
+
+  .card li {
+    margin-bottom: 12px;
+    font-size: 15px;
+  }
+
+  .card .note {
+    font-size: 12px;
+    color: #666;
+    border-top: 1px solid #ddd;
+    padding-top: 14px;
+  }
+
+  /* --- Underlay template (screen preview) --- */
+  .underlay-wrap {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 24px;
+    max-width: 640px;
+    margin: 20px auto 0;
+  }
+
+  #underlaySvg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .scale-note {
+    text-align: center;
+    color: #666;
+    font-size: 12px;
+    margin-top: 8px;
+  }
+
+  @media print {
+    nav, .no-print, #concept-section { display: none !important; }
+
+    body { background: #fff; color: #000; }
+
+    section { border: none; padding: 0; page-break-after: always; }
+
+    .card, .underlay-wrap { box-shadow: none; margin: 0; max-width: none; }
+  }
+</style>
+</head>
+<body>
+<nav><a href="/">Cultural Text Galaxy</a> / Writing Guide</nav>
+
+<main>
+  <section id="concept-section">
+    <h1>Writing Guide</h1>
+    <h2>Research Foundation</h2>
+    <p>
+      The radial formation is not decorative. It is drawn from a specific
+      precedent that fits the workshop's own concept: naming as a way of
+      claiming a place in the sky.
+    </p>
+
+    <div class="precedent">
+      <div class="tag">Primary reference</div>
+      <h3>Cheonsang Yeolcha Bunyajido (천상열차분야지도)</h3>
+      <p>
+        A 14th-century Korean stone star chart. It places the celestial pole
+        at the center of the stone and arranges constellations in rings
+        radiating outward from it. It was carved under a Joseon king partly
+        as a claim of sovereignty over the sky itself. A center point with
+        names radiating outward carries the same structure, and the same
+        idea: naming what is yours to name.
+      </p>
+    </div>
+
+    <div class="precedent">
+      <div class="tag">Secondary reference</div>
+      <h3>Fan and pedigree charts</h3>
+      <p>
+        Circular genealogy diagrams that radiate outward from a person
+        through their family line. Closer to the poem's own list of names,
+        family, neighbors, and distant relatives, than a pure star chart is.
+      </p>
+    </div>
+
+    <div class="precedent">
+      <div class="tag">Supporting principle</div>
+      <h3>The non-hierarchical circle</h3>
+      <p>
+        Writing in a ring, with no first or last position, is a documented
+        pattern across many communal and ritual practices, used specifically
+        so no name outranks another. It supports the workshop's own claim
+        that different scripts and languages coexist without being flattened
+        into a single order.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Instruction Card</h2>
+    <p>Print this at table signage size. Plain language, minimal text, works for participants across languages.</p>
+    <div class="card">
+      <div class="eyebrow">Communal Volumetric Cultural Text Galaxy</div>
+      <h3>How to add your name to the sky</h3>
+      <ol>
+        <li>Find an open ray on the circle.</li>
+        <li>Write your name along it. Let the top of your letters point outward, away from the center.</li>
+        <li>Write in your own language, your own script. Nothing here needs translating.</li>
+        <li>Leave the center clear. It stays open, shared by everyone.</li>
+        <li>We will photograph your name and send it into the galaxy on screen.</li>
+      </ol>
+      <div class="note">Inspired by Cheonsang Yeolcha Bunyajido, a centuries-old Korean star chart, and Yoon Dong-ju's 1941 poem "Counting the Stars at Night."</div>
+    </div>
+    <div class="no-print" style="text-align:center;">
+      <button class="print-btn" onclick="window.print()">Print this page</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>Underlay Template</h2>
+    <p>
+      A shared master sheet, not a per-person handout. Place a blank sheet
+      over this guide (or scale it up to your final communal sheet size) so
+      each participant writes along an open ray in turn. Twenty rays, one
+      per expected participant. The center stays empty.
+    </p>
+    <div class="underlay-wrap">
+      <svg id="underlaySvg" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <p class="scale-note">Scale bar shown at bottom right. Print or project at any size, the proportions stay correct.</p>
+    <div class="no-print" style="text-align:center;">
+      <button class="print-btn" onclick="window.print()">Print this page</button>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  var svg = document.getElementById('underlaySvg');
+  var ns = 'http://www.w3.org/2000/svg';
+  var cx = 500, cy = 500;
+  var innerR = 90;   // keep-clear zone around the center
+  var outerR = 460;  // writing boundary near the sheet edge
+  var rayCount = 20; // matches MAX_PARTICIPANTS_EXPECTED in server/index.js
+
+  function el(tag, attrs) {
+    var e = document.createElementNS(ns, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  // outer boundary + inner keep-clear circle
+  svg.appendChild(el('circle', { cx: cx, cy: cy, r: outerR, fill: 'none', stroke: '#ccc', 'stroke-width': 2 }));
+  svg.appendChild(el('circle', { cx: cx, cy: cy, r: innerR, fill: 'none', stroke: '#bbb', 'stroke-width': 2, 'stroke-dasharray': '6 6' }));
+
+  for (var i = 0; i < rayCount; i++) {
+    var angle = (-90 + (360 / rayCount) * i) * (Math.PI / 180);
+    var x1 = cx + innerR * Math.cos(angle);
+    var y1 = cy + innerR * Math.sin(angle);
+    var x2 = cx + outerR * Math.cos(angle);
+    var y2 = cy + outerR * Math.sin(angle);
+
+    svg.appendChild(el('line', {
+      x1: x1, y1: y1, x2: x2, y2: y2,
+      stroke: i === 0 ? '#6c7bff' : '#d8d8e8',
+      'stroke-width': i === 0 ? 3 : 1.5
+    }));
+
+    var lx = cx + (outerR + 22) * Math.cos(angle);
+    var ly = cy + (outerR + 22) * Math.sin(angle);
+    var label = el('text', {
+      x: lx, y: ly, fill: '#999', 'font-size': 14,
+      'text-anchor': 'middle', 'dominant-baseline': 'middle'
+    });
+    label.textContent = i + 1;
+    svg.appendChild(label);
+  }
+
+  // orientation cue on ray 1: arrow + example word pointing outward
+  var startAngle = -90 * (Math.PI / 180);
+  var arrowR = (innerR + outerR) / 2;
+  var ax = cx + arrowR * Math.cos(startAngle);
+  var ay = cy + arrowR * Math.sin(startAngle);
+  var arrowHead = el('path', {
+    d: 'M ' + (ax - 8) + ' ' + (ay + 10) + ' L ' + ax + ' ' + (ay - 6) + ' L ' + (ax + 8) + ' ' + (ay + 10),
+    fill: 'none', stroke: '#6c7bff', 'stroke-width': 2.5,
+    'stroke-linejoin': 'round', 'stroke-linecap': 'round'
+  });
+  svg.appendChild(arrowHead);
+  var startLabel = el('text', {
+    x: cx, y: cy - outerR + 40, fill: '#6c7bff', 'font-size': 13,
+    'text-anchor': 'middle', 'font-weight': 'bold'
+  });
+  startLabel.textContent = 'write outward, this direction';
+  svg.appendChild(startLabel);
+
+  var centerLabel = el('text', {
+    x: cx, y: cy, fill: '#aaa', 'font-size': 12,
+    'text-anchor': 'middle', 'dominant-baseline': 'middle'
+  });
+  centerLabel.textContent = 'keep clear';
+  svg.appendChild(centerLabel);
+
+  // scale bar: 10cm reference, callers rescale the printed sheet as needed
+  var barX = cx + outerR - 120;
+  var barY = cy + outerR + 60;
+  svg.appendChild(el('line', { x1: barX, y1: barY, x2: barX + 100, y2: barY, stroke: '#999', 'stroke-width': 2 }));
+  svg.appendChild(el('line', { x1: barX, y1: barY - 6, x2: barX, y2: barY + 6, stroke: '#999', 'stroke-width': 2 }));
+  svg.appendChild(el('line', { x1: barX + 100, y1: barY - 6, x2: barX + 100, y2: barY + 6, stroke: '#999', 'stroke-width': 2 }));
+  var barLabel = el('text', { x: barX + 50, y: barY + 20, fill: '#999', 'font-size': 12, 'text-anchor': 'middle' });
+  barLabel.textContent = 'reference unit';
+  svg.appendChild(barLabel);
+})();
+</script>
+</body>
+</html>

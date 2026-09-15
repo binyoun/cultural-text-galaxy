@@ -138,12 +138,76 @@ window.addEventListener('resize', () => {
   composer.setSize(window.innerWidth, window.innerHeight);
 });
 
+// Local gravity well: the cursor perturbs nearby stars without touching
+// their underlying orbit state, so releasing it lets them fall right back
+// onto their normal path instead of drifting off permanently.
+const raycaster = new THREE.Raycaster();
+const pointerNDC = new THREE.Vector2();
+const interactionPlane = new THREE.Plane();
+const camForward = new THREE.Vector3();
+const attractorWorld = new THREE.Vector3();
+const attractorLocal = new THREE.Vector3();
+const toAttractor = new THREE.Vector3();
+let pointerActive = false;
+
+const PULL_RADIUS = 6;
+const PULL_STRENGTH = 8;
+
+function setPointerFromEvent(event) {
+  pointerNDC.x = (event.clientX / window.innerWidth) * 2 - 1;
+  pointerNDC.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  pointerActive = true;
+}
+
+window.addEventListener('pointermove', setPointerFromEvent);
+window.addEventListener('pointerdown', setPointerFromEvent);
+window.addEventListener('pointerup', () => { pointerActive = false; });
+window.addEventListener('pointercancel', () => { pointerActive = false; });
+window.addEventListener('pointerleave', () => { pointerActive = false; });
+
+function updateAttractor() {
+  if (!pointerActive) return;
+
+  camera.getWorldDirection(camForward);
+  interactionPlane.setFromNormalAndCoplanarPoint(camForward, scene.position);
+
+  raycaster.setFromCamera(pointerNDC, camera);
+  const hit = raycaster.ray.intersectPlane(interactionPlane, attractorWorld);
+  if (!hit) return;
+
+  // particles live in the scene's local space, which spins over time,
+  // so bring the world-space hit point into that same rotating frame
+  const theta = scene.rotation.y;
+  const cosT = Math.cos(theta);
+  const sinT = Math.sin(theta);
+  attractorLocal.set(
+    attractorWorld.x * cosT - attractorWorld.z * sinT,
+    attractorWorld.y,
+    attractorWorld.x * sinT + attractorWorld.z * cosT
+  );
+}
+
+function applyGravityWell(sprite, dt) {
+  if (!pointerActive) return;
+
+  toAttractor.copy(attractorLocal).sub(sprite.position);
+  const dist = toAttractor.length();
+  if (dist <= 0.0001 || dist >= PULL_RADIUS) return;
+
+  const falloff = 1 - dist / PULL_RADIUS;
+  toAttractor.normalize().multiplyScalar(falloff * falloff * PULL_STRENGTH * dt);
+  sprite.position.add(toAttractor);
+  sprite.material.opacity = Math.min(1, sprite.material.opacity + falloff * 0.25);
+}
+
 const clock = new THREE.Clock();
 
 function animate() {
   requestAnimationFrame(animate);
   const dt = Math.min(clock.getDelta(), 0.05);
   const density = densityFactor();
+
+  updateAttractor();
 
   for (const p of particles) {
     const pos = stepVortex(p.orbit, dt, density);
@@ -157,6 +221,8 @@ function animate() {
 
     const farFade = THREE.MathUtils.clamp(1.4 - distToCamera / 30, 0.2, 1);
     p.sprite.material.opacity = farFade * p.sprite.userData.baseOpacity;
+
+    applyGravityWell(p.sprite, dt);
   }
 
   scene.rotation.y += 0.02 * dt * (0.5 + density * 0.5);
