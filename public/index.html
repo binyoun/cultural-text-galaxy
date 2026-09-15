@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Communal Volumetric Cultural Text Galaxy</title>
-<meta name="description" content="A participatory workshop where handwritten cultural text becomes a shared 3D particle constellation, presented at ISEA 2026: ELYAH." />
+<title>Counting Cultural Stars</title>
+<meta name="description" content="A beginner-friendly ISEA 2026: ELYAH workshop where participants transform handwritten cultural words into animated 3D star-like constellations." />
 <style>
   :root {
     --bg: #030209;
@@ -242,6 +242,39 @@
     background: var(--bg-alt);
   }
 
+  .organizers {
+    display: grid;
+    gap: 20px;
+    margin-top: 24px;
+  }
+
+  @media (min-width: 640px) {
+    .organizers { grid-template-columns: 1fr 1fr; }
+  }
+
+  .organizer {
+    padding: 24px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--bg-alt);
+  }
+
+  .organizer h3 {
+    margin: 0 0 4px;
+    font-size: 17px;
+  }
+
+  .organizer .role {
+    font-size: 13px;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+
+  .organizer p {
+    font-size: 14px;
+    margin: 0;
+  }
+
   footer {
     max-width: 780px;
     margin: 0 auto;
@@ -263,10 +296,12 @@
 
 <div class="content">
   <nav>
-    <div>Cultural Text Galaxy</div>
+    <div>Counting Cultural Stars</div>
     <div class="links">
+      <a href="#about">About</a>
       <a href="#concept">Concept</a>
       <a href="#isea">ISEA 2026</a>
+      <a href="#organizers">Organizers</a>
       <a href="/writing-guide.html">Writing Guide</a>
       <a href="/mobile.html">Add Your Name</a>
       <a href="/display.html">View the Galaxy</a>
@@ -274,18 +309,48 @@
   </nav>
 
   <header class="hero">
-    <div class="eyebrow">ISEA 2026: ELYAH, Dubai</div>
-    <h1>Communal Volumetric Cultural Text Galaxy</h1>
+    <div class="eyebrow">ISEA 2026: ELYAH, Dubai Workshop</div>
+    <h1>Counting Cultural Stars</h1>
     <p class="subtitle">
-      A participatory workshop where handwritten cultural text, in the
-      languages and scripts participants call their own, becomes a shared
-      three-dimensional constellation in real time.
+      A communal volumetric cultural text galaxy: participants transform
+      handwritten cultural words, in the languages and scripts they call
+      their own, into animated 3D star-like constellations that drift,
+      gather, and spread in shared space.
     </p>
     <div class="cta-row">
       <a class="btn btn-primary" href="/mobile.html">Add your text</a>
       <a class="btn btn-secondary" href="/display.html">View the live galaxy</a>
     </div>
   </header>
+
+  <section id="about">
+    <h2>About the Workshop</h2>
+    <p>
+      Counting Cultural Stars is a beginner-friendly creative workshop
+      where participants transform meaningful cultural words into
+      animated 3D star-like constellations using TouchDesigner. Inspired
+      by Yoon Dong-ju's 1941 poem <em>Counting the Stars at Night</em>, in
+      which naming stars became a way of preserving suppressed identities,
+      the workshop explores how names, memories, and cultural language can
+      become moving particles that drift, gather, and spread in space.
+    </p>
+    <p>
+      The workshop opens with the poem's historical context and its
+      connection to the ISEA 2026 theme, ELYAH. Participants then write
+      cultural words, names, places, untranslatable concepts, on paper in
+      their own languages. A scanning device built by the organizers
+      captures each handwritten text as an image and saves it into the
+      system. Participants then use TouchDesigner's ready-made tools to
+      transform their cultural words into dynamic point-cloud
+      constellations.
+    </p>
+    <p>
+      Through a step-by-step guided interface, participants experiment
+      with core behaviors such as turbulence, attraction, and clustering,
+      working through both the technical mechanics and the creative
+      interpretation behind them.
+    </p>
+  </section>
 
   <section id="concept">
     <h2>Conceptual Foundation</h2>
@@ -351,10 +416,10 @@
           This workshop responds by transforming handwritten cultural text,
           embodied markers of place and belonging, into three-dimensional particle
           systems. Participants learn how computational behaviors such as
-          drift, attraction, and turbulence can represent the experience of
-          cultural displacement and reconnection, discovering how to chart
-          constellations of identity through hands-on, real-time generative
-          practice.
+          turbulence, attraction, and clustering can represent the
+          experience of cultural displacement and reconnection, discovering
+          how to chart constellations of identity through hands-on,
+          real-time generative practice.
         </p>
       </div>
 
@@ -387,6 +452,42 @@
     </div>
   </section>
 
+  <section id="organizers">
+    <h2>Organizers</h2>
+    <div class="organizers">
+      <div class="organizer">
+        <h3>Bin Youn</h3>
+        <div class="role">Multimedia Artist, Associate Lecturer, RMIT University Vietnam</div>
+        <p>
+          Bin Youn is a Korean multimedia artist and Associate Lecturer at
+          RMIT University Vietnam. Her work explores cultural narratives,
+          diasporic memory, and technological intimacy through spatial
+          video installations and computational media. She draws
+          inspiration from Korean cultural philosophy such as Pungryu and
+          I-Ching, translating these ideas into contemporary digital forms.
+          Her teaching integrates accessible creative coding methods to
+          help students connect culture, identity, and technology.
+        </p>
+      </div>
+      <div class="organizer">
+        <h3>Ng Yi Kee</h3>
+        <div class="role">Sound Artist and Educator, Multimedia University, Cyberjaya</div>
+        <p>
+          Ng Yi Kee is a sound artist and educator at Multimedia
+          University, Cyberjaya, where she teaches TouchDesigner and
+          visual programming. Her research and artistic practice
+          investigate human-nonhuman relations through field recording,
+          sound installation, and experimental sonic methods, focusing on
+          landscapes reshaped by urbanisation, development, and
+          environmental change. Through site observation and contextual
+          research, she explores how these changing environments reshape
+          the relationships between humans, nonhuman entities, and the
+          spaces they share.
+        </p>
+      </div>
+    </div>
+  </section>
+
   <section id="join">
     <h2>Join the Galaxy</h2>
     <h3>Bring your text. Leave a star.</h3>
@@ -403,7 +504,8 @@
   </section>
 
   <footer>
-    Communal Volumetric Cultural Text Galaxy. Presented at ISEA 2026: ELYAH.
+    Counting Cultural Stars. Presented at ISEA 2026: ELYAH, Dubai.
+    Bin Youn and Ng Yi Kee.
   </footer>
 </div>
 
