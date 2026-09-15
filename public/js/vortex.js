@@ -2,9 +2,15 @@
 // matrix. Each particle carries its own orbital state; this module advances
 // that state one frame at a time inside the caller's requestAnimationFrame loop.
 
-const MIN_ORBIT_RADIUS = 1.4;
+const MIN_ORBIT_RADIUS = 3.5; // wide enough that ~20 sprites can ring it without stacking
 const SPAWN_RADIUS = 14;
-const INWARD_RATE = 0.18; // how fast a particle drifts toward the core per second
+// At typical density this gives a radius half-life of several minutes, not
+// seconds. The original 0.18 collapsed every entry to MIN_ORBIT_RADIUS
+// within about 20-30 seconds regardless of when it spawned, so the whole
+// field piled into one unreadable cluster almost immediately and stayed
+// there. This is meant to be a slow, ongoing drift over the length of a
+// session, not a fast vacuum toward the core.
+const INWARD_RATE = 0.0015;
 const BASE_ANGULAR_VELOCITY = 0.35; // radians/sec at spawn radius
 const HEIGHT_DRIFT_SPEED = 0.4;
 const SECTOR_COUNT = 12; // matches the twelve Yeolcha field-allocation sectors
