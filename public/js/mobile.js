@@ -16,6 +16,7 @@ const cameraInput = document.getElementById('cameraInput'); // native camera app
 const uploadInput = document.getElementById('uploadInput'); // gallery / file picker
 
 const regionButtons = document.querySelectorAll('.region-btn');
+const regionWedges = document.querySelectorAll('.region-preview path[data-region]');
 const placeInput = document.getElementById('place-input');
 const colorInput = document.getElementById('color-input');
 const transparencyInput = document.getElementById('transparency-input');
@@ -28,16 +29,16 @@ let selectedFile = null;
 let mediaStream = null;
 let selectedRegion = '';
 
+function setSelectedRegion(region) {
+  selectedRegion = region;
+  regionButtons.forEach((b) => b.classList.toggle('selected', b.dataset.region === region));
+  regionWedges.forEach((w) => w.classList.toggle('selected', w.dataset.region === region));
+}
+
 regionButtons.forEach((btn) => {
   btn.addEventListener('click', () => {
     const isAlreadySelected = btn.classList.contains('selected');
-    regionButtons.forEach((b) => b.classList.remove('selected'));
-    if (isAlreadySelected) {
-      selectedRegion = '';
-    } else {
-      btn.classList.add('selected');
-      selectedRegion = btn.dataset.region;
-    }
+    setSelectedRegion(isAlreadySelected ? '' : btn.dataset.region);
   });
 });
 
@@ -163,8 +164,7 @@ function resetForm() {
   cameraInput.value = '';
   uploadInput.value = '';
   placeInput.value = '';
-  selectedRegion = '';
-  regionButtons.forEach((b) => b.classList.remove('selected'));
+  setSelectedRegion('');
   submitBtn.disabled = true;
   showPreCapture();
 }

@@ -69,6 +69,18 @@
 
     <div class="field">
       <div class="field-label">Region (optional, sets where your star sits)</div>
+      <div class="region-preview">
+        <svg viewBox="0 0 200 200">
+          <path id="wedge-asia" data-region="asia" d="M100,100 L100,15 A85,85 0 0 1 173.6,57.5 Z"></path>
+          <path id="wedge-middle-east" data-region="middle-east" d="M100,100 L173.6,57.5 A85,85 0 0 1 173.6,142.5 Z"></path>
+          <path id="wedge-africa" data-region="africa" d="M100,100 L173.6,142.5 A85,85 0 0 1 100,185 Z"></path>
+          <path id="wedge-europe" data-region="europe" d="M100,100 L100,185 A85,85 0 0 1 26.4,142.5 Z"></path>
+          <path id="wedge-americas" data-region="americas" d="M100,100 L26.4,142.5 A85,85 0 0 1 26.4,57.5 Z"></path>
+          <path id="wedge-oceania" data-region="oceania" d="M100,100 L26.4,57.5 A85,85 0 0 1 100,15 Z"></path>
+          <circle cx="100" cy="100" r="14" class="wedge-center"></circle>
+        </svg>
+        <p class="hint">Highlights where your star will settle in the display.</p>
+      </div>
       <div class="region-grid" id="regionGrid">
         <button type="button" class="region-btn" data-region="asia">Asia</button>
         <button type="button" class="region-btn" data-region="middle-east">Middle East</button>

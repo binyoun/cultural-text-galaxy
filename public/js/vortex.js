@@ -52,6 +52,18 @@ export function regionToAngle(region) {
   return start * sectorWidth + Math.random() * sectorWidth * 2;
 }
 
+// The center angle of a region's two-sector band, for labeling the sky
+// itself, distinct from regionToAngle's randomized placement of a star.
+export function regionLabelAngle(region) {
+  const start = REGION_SECTOR_START[region];
+  if (start === undefined) return null;
+
+  const sectorWidth = (Math.PI * 2) / SECTOR_COUNT;
+  return start * sectorWidth + sectorWidth;
+}
+
+export const REGIONS = Object.keys(REGION_SECTOR_START);
+
 /**
  * Advances one particle's orbital state by dt seconds.
  *

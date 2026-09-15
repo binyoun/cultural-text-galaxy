@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { createOrbitState, stepVortex, regionToAngle, VORTEX_CONSTANTS } from './vortex.js';
+import { createOrbitState, stepVortex, regionToAngle, regionLabelAngle, REGIONS, VORTEX_CONSTANTS } from './vortex.js';
 
 const MAX_PARTICIPANTS_EXPECTED_DEFAULT = 20;
 
@@ -74,6 +74,55 @@ const nebulaMaterial = new THREE.PointsMaterial({
 const nebula = new THREE.Points(nebulaGeometry, nebulaMaterial);
 nebula.geometry.setDrawRange(0, operatorNebulaBaseline);
 scene.add(nebula);
+
+// Sector labels: makes the field-allocation choice on the mobile form
+// visible here, without this, picking a region has no discoverable
+// effect. Text sprites live in `scene` so they rotate with the vortex,
+// staying aligned with the region's actual current sky position.
+const REGION_LABEL_TEXT = {
+  asia: 'Asia',
+  'middle-east': 'Middle East',
+  africa: 'Africa',
+  europe: 'Europe',
+  americas: 'Americas',
+  oceania: 'Oceania',
+};
+const LABEL_RADIUS = 17;
+
+function createTextSprite(text) {
+  const canvasEl = document.createElement('canvas');
+  const ctx = canvasEl.getContext('2d');
+  const fontSize = 48;
+  ctx.font = `${fontSize}px -apple-system, sans-serif`;
+  const width = Math.ceil(ctx.measureText(text).width) + 40;
+  const height = fontSize + 40;
+  canvasEl.width = width;
+  canvasEl.height = height;
+
+  ctx.font = `${fontSize}px -apple-system, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = 'rgba(180, 200, 255, 0.35)';
+  ctx.fillText(text, width / 2, height / 2);
+
+  const texture = new THREE.CanvasTexture(canvasEl);
+  const material = new THREE.SpriteMaterial({
+    map: texture,
+    transparent: true,
+    depthWrite: false,
+  });
+  const sprite = new THREE.Sprite(material);
+  const aspect = width / height;
+  sprite.scale.set(3 * aspect, 3, 1);
+  return sprite;
+}
+
+for (const region of REGIONS) {
+  const angle = regionLabelAngle(region);
+  const sprite = createTextSprite(REGION_LABEL_TEXT[region]);
+  sprite.position.set(Math.cos(angle) * LABEL_RADIUS, 0, Math.sin(angle) * LABEL_RADIUS);
+  scene.add(sprite);
+}
 
 const textureLoader = new THREE.TextureLoader();
 const particles = []; // { sprite, orbit, baseScale, intensity }
@@ -149,8 +198,24 @@ fetch('/api/entries')
     data.entries.forEach(spawnParticle);
   });
 
+// Surfaces the optional "place" text somewhere, otherwise a participant who
+// types one has no way to know it went anywhere. Only for live arrivals,
+// not the entries hydrated on load, which would fire a burst all at once.
+const newEntryToast = document.getElementById('newEntryToast');
+let toastTimer = null;
+
+function showNewEntryToast(entry) {
+  if (!entry.place) return;
+  clearTimeout(toastTimer);
+  newEntryToast.textContent = `New star from ${entry.place}`;
+  newEntryToast.hidden = false;
+  requestAnimationFrame(() => newEntryToast.classList.add('visible'));
+  toastTimer = setTimeout(() => newEntryToast.classList.remove('visible'), 4000);
+}
+
 const socket = io();
 socket.on('newEntry', spawnParticle);
+socket.on('newEntry', showNewEntryToast);
 socket.on('count', ({ count, maxParticipantsExpected: max }) => setCount(count, max));
 
 window.addEventListener('resize', () => {

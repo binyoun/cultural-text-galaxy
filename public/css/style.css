@@ -123,6 +123,21 @@ nav.site-nav .links a.current .star-dot {
   pointer-events: none;
 }
 
+#newEntryToast {
+  position: fixed;
+  top: 60px;
+  left: 20px;
+  font-size: 13px;
+  color: #d3d6f2;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+
+#newEntryToast.visible {
+  opacity: 0.85;
+}
+
 #operatorPanel {
   position: fixed;
   bottom: 20px;
@@ -322,6 +337,38 @@ body.mobile h1 {
 .field-label {
   font-size: 13px;
   color: #b9bfe6;
+}
+
+.region-preview {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.region-preview svg {
+  width: 160px;
+  height: 160px;
+}
+
+.region-preview path {
+  fill: #0a0c1e;
+  stroke: #23264a;
+  stroke-width: 1;
+  transition: fill 0.2s;
+}
+
+.region-preview path.selected {
+  fill: #1a1f4a;
+  stroke: #6c7bff;
+}
+
+.region-preview .wedge-center {
+  fill: #02010a;
+  stroke: #3a3f6b;
+}
+
+.region-preview .hint {
+  margin: 4px 0 0;
+  font-size: 12px;
 }
 
 .region-grid {
