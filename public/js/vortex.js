@@ -7,13 +7,17 @@ const SPAWN_RADIUS = 14;
 const INWARD_RATE = 0.18; // how fast a particle drifts toward the core per second
 const BASE_ANGULAR_VELOCITY = 0.35; // radians/sec at spawn radius
 const HEIGHT_DRIFT_SPEED = 0.4;
+const SECTOR_COUNT = 12; // matches the twelve Yeolcha field-allocation sectors
 
 /**
  * Creates the initial orbital state for a newly spawned particle,
  * placed at the peripheral boundary of the vector field.
+ *
+ * @param {number} seed random value, also drives height/noise variety
+ * @param {number|null} angleOverride if given, used instead of a random angle
  */
-export function createOrbitState(seed = Math.random()) {
-  const angle = seed * Math.PI * 2;
+export function createOrbitState(seed = Math.random(), angleOverride = null) {
+  const angle = angleOverride !== null ? angleOverride : seed * Math.PI * 2;
   const height = (seed - 0.5) * 6;
   return {
     radius: SPAWN_RADIUS,
@@ -23,6 +27,23 @@ export function createOrbitState(seed = Math.random()) {
     noiseSeed: seed * 1000,
     age: 0,
   };
+}
+
+/**
+ * Field allocation (bunya): hashes a place name into one of twelve sky
+ * sectors, matching the chart's historical Yeolcha divisions, then picks a
+ * random angle within that sector. Entries from the same place cluster in
+ * the same region of sky instead of landing on the exact same point or
+ * scattering uniformly at random.
+ */
+export function originToSectorAngle(origin) {
+  let hash = 0;
+  for (let i = 0; i < origin.length; i++) {
+    hash = (hash * 31 + origin.charCodeAt(i)) >>> 0;
+  }
+  const sector = hash % SECTOR_COUNT;
+  const sectorWidth = (Math.PI * 2) / SECTOR_COUNT;
+  return sector * sectorWidth + Math.random() * sectorWidth;
 }
 
 /**

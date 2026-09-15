@@ -2,12 +2,25 @@ import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { createOrbitState, stepVortex, VORTEX_CONSTANTS } from './vortex.js';
+import { createOrbitState, stepVortex, originToSectorAngle, VORTEX_CONSTANTS } from './vortex.js';
 
 const MAX_PARTICIPANTS_EXPECTED_DEFAULT = 20;
 
 const canvas = document.getElementById('scene');
 const hudCount = document.getElementById('participant-count');
+
+// Operator tuning: mirrors what the TD side can already tune on its
+// Particle COMP (rate, density, glow), but here it's a hidden show-runner
+// control, never participant-facing. Values load from the URL so a
+// configuration can be bookmarked, and adjust live via the ` panel.
+function clampNum(value, min, max, fallback) {
+  return Number.isNaN(value) ? fallback : Math.min(max, Math.max(min, value));
+}
+
+const urlParams = new URLSearchParams(window.location.search);
+let operatorRotationMultiplier = clampNum(parseFloat(urlParams.get('rotation')), 0.2, 3, 1);
+let operatorBloomOffset = clampNum(parseFloat(urlParams.get('bloom')), -0.5, 1.5, 0);
+let operatorNebulaBaseline = clampNum(parseInt(urlParams.get('nebula'), 10), 0, 800, 250);
 
 const scene = new THREE.Scene();
 scene.fog = new THREE.FogExp2(0x02010a, 0.028);
@@ -57,9 +70,9 @@ const nebulaMaterial = new THREE.PointsMaterial({
   blending: THREE.AdditiveBlending,
   depthWrite: false,
 });
-const NEBULA_BASELINE = 250; // idle ambient count, so the screen isn't dead at 0 participants
+// idle ambient count (operatorNebulaBaseline), so the screen isn't dead at 0 participants
 const nebula = new THREE.Points(nebulaGeometry, nebulaMaterial);
-nebula.geometry.setDrawRange(0, NEBULA_BASELINE);
+nebula.geometry.setDrawRange(0, operatorNebulaBaseline);
 scene.add(nebula);
 
 const textureLoader = new THREE.TextureLoader();
@@ -100,9 +113,15 @@ function spawnParticle(entry) {
 
     scene.add(sprite);
 
+    // Field allocation: an entry with a place noted lands in that place's
+    // sky sector instead of a purely random angle.
+    const angleOverride = entry.origin
+      ? originToSectorAngle(entry.origin.trim().toLowerCase())
+      : null;
+
     particles.push({
       sprite,
-      orbit: createOrbitState(Math.random()),
+      orbit: createOrbitState(Math.random(), angleOverride),
       baseScale,
       aspect,
       magnitudeScale,
@@ -114,7 +133,7 @@ function spawnParticle(entry) {
 
 function updateNebulaDrawRange() {
   const ratio = Math.min(1, particles.length / maxParticipantsExpected);
-  const count = NEBULA_BASELINE + Math.floor((NEBULA_MAX - NEBULA_BASELINE) * ratio);
+  const count = operatorNebulaBaseline + Math.floor((NEBULA_MAX - operatorNebulaBaseline) * ratio);
   nebula.geometry.setDrawRange(0, count);
 }
 
@@ -230,10 +249,54 @@ function animate() {
     applyGravityWell(p.sprite, dt);
   }
 
-  scene.rotation.y += 0.02 * dt * (0.5 + density * 0.5);
-  bloomPass.strength = 1.1 + density * 0.9;
+  scene.rotation.y += 0.02 * dt * (0.5 + density * 0.5) * operatorRotationMultiplier;
+  bloomPass.strength = Math.max(0, 1.1 + density * 0.9 + operatorBloomOffset);
 
   composer.render();
 }
 
 animate();
+
+// Operator panel: hidden show-runner controls, toggled with the ` key.
+const operatorPanel = document.getElementById('operatorPanel');
+const opRotation = document.getElementById('opRotation');
+const opBloom = document.getElementById('opBloom');
+const opNebula = document.getElementById('opNebula');
+const opCopyLink = document.getElementById('opCopyLink');
+const opCopyStatus = document.getElementById('opCopyStatus');
+
+opRotation.value = operatorRotationMultiplier;
+opBloom.value = operatorBloomOffset;
+opNebula.value = operatorNebulaBaseline;
+
+window.addEventListener('keydown', (e) => {
+  if (e.key === '`') {
+    operatorPanel.hidden = !operatorPanel.hidden;
+  }
+});
+
+opRotation.addEventListener('input', () => {
+  operatorRotationMultiplier = parseFloat(opRotation.value);
+});
+
+opBloom.addEventListener('input', () => {
+  operatorBloomOffset = parseFloat(opBloom.value);
+});
+
+opNebula.addEventListener('input', () => {
+  operatorNebulaBaseline = parseInt(opNebula.value, 10);
+  updateNebulaDrawRange();
+});
+
+opCopyLink.addEventListener('click', async () => {
+  const url = new URL(window.location.href);
+  url.searchParams.set('rotation', operatorRotationMultiplier);
+  url.searchParams.set('bloom', operatorBloomOffset);
+  url.searchParams.set('nebula', operatorNebulaBaseline);
+  try {
+    await navigator.clipboard.writeText(url.toString());
+    opCopyStatus.textContent = 'Copied.';
+  } catch (err) {
+    opCopyStatus.textContent = url.toString();
+  }
+});

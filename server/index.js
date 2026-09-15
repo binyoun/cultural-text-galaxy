@@ -49,6 +49,7 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
     const color = hexToRgb(req.body.color || '#ffffff');
     const transparency = clamp(parseFloat(req.body.transparency), 0.1, 1.0, 1.0);
     const intensity = clamp(parseFloat(req.body.intensity), 1.0, 5.0, 1.0);
+    const origin = (req.body.origin || '').toString().trim().slice(0, 60);
 
     const pngBuffer = await processHandwriting(req.file.buffer, color);
 
@@ -62,6 +63,7 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
       color: req.body.color || '#ffffff',
       transparency,
       intensity,
+      origin,
       createdAt: Date.now(),
     };
 

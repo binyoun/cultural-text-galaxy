@@ -15,6 +15,7 @@ const retakeBtn = document.getElementById('retakeBtn');
 const cameraInput = document.getElementById('cameraInput'); // native camera app fallback
 const uploadInput = document.getElementById('uploadInput'); // gallery / file picker
 
+const originInput = document.getElementById('origin-input');
 const colorInput = document.getElementById('color-input');
 const transparencyInput = document.getElementById('transparency-input');
 const intensityInput = document.getElementById('intensity-input');
@@ -127,6 +128,7 @@ submitBtn.addEventListener('click', async () => {
   formData.append('color', colorInput.value);
   formData.append('transparency', transparencyInput.value);
   formData.append('intensity', intensityInput.value);
+  formData.append('origin', originInput.value);
 
   try {
     const res = await fetch('/api/submit', { method: 'POST', body: formData });

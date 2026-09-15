@@ -123,6 +123,60 @@ nav.site-nav .links a.current .star-dot {
   pointer-events: none;
 }
 
+#operatorPanel {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 240px;
+  padding: 16px 18px;
+  background: rgba(10, 12, 30, 0.9);
+  border: 1px solid #23264a;
+  border-radius: 12px;
+  font-size: 12px;
+  color: #d3d6f2;
+  z-index: 10;
+}
+
+#operatorPanel .op-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #8fd6ff;
+  margin-bottom: 12px;
+}
+
+#operatorPanel label {
+  display: block;
+  margin-bottom: 12px;
+}
+
+#operatorPanel input[type="range"] {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+}
+
+#operatorPanel button {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #23264a;
+  border-radius: 8px;
+  background: transparent;
+  color: #eef0ff;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+#operatorPanel button:hover {
+  border-color: #6c7bff;
+}
+
+#operatorPanel #opCopyStatus {
+  min-height: 14px;
+  margin: 6px 0 0;
+  color: #8fd6a1;
+}
+
 body.mobile {
   min-height: 100vh;
   display: flex;
