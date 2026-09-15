@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Counting Cultural Stars</title>
 <meta name="description" content="A beginner-friendly ISEA 2026: ELYAH workshop where participants transform handwritten cultural words into animated 3D star-like constellations." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #030209;
@@ -49,22 +51,69 @@
     padding: 20px 24px;
     max-width: 980px;
     margin: 0 auto;
-    font-size: 13px;
-    letter-spacing: 0.04em;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--muted);
   }
 
+  nav .brand {
+    font-weight: 700;
+  }
+
+  nav .links {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  nav .links svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  nav .links svg polyline {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1;
+    opacity: 0.35;
+  }
+
   nav .links a {
-    margin-left: 20px;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    margin-left: 22px;
+    padding-top: 12px;
     text-decoration: none;
     color: var(--muted);
-    border-bottom: 1px solid transparent;
+  }
+
+  nav .links a .star-dot {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--muted);
+    box-shadow: 0 0 4px var(--muted);
+    transition: background 0.2s, box-shadow 0.2s;
   }
 
   nav .links a:hover {
     color: var(--text);
-    border-bottom-color: var(--accent);
+  }
+
+  nav .links a:hover .star-dot {
+    background: var(--accent);
+    box-shadow: 0 0 10px 2px var(--accent);
   }
 
   header.hero {
@@ -296,15 +345,16 @@
 
 <div class="content">
   <nav>
-    <div>Counting Cultural Stars</div>
-    <div class="links">
-      <a href="#about">About</a>
-      <a href="#concept">Concept</a>
-      <a href="#isea">ISEA 2026</a>
-      <a href="#organizers">Organizers</a>
-      <a href="/writing-guide.html">Writing Guide</a>
-      <a href="/mobile.html">Add Your Name</a>
-      <a href="/display.html">View the Galaxy</a>
+    <div class="brand">Counting Cultural Stars</div>
+    <div class="links" id="navLinks">
+      <svg id="navConstellation"><polyline id="navPolyline" points=""></polyline></svg>
+      <a href="#about"><span class="star-dot"></span>About</a>
+      <a href="#concept"><span class="star-dot"></span>Concept</a>
+      <a href="#isea"><span class="star-dot"></span>ISEA 2026</a>
+      <a href="#organizers"><span class="star-dot"></span>Organizers</a>
+      <a href="/writing-guide.html"><span class="star-dot"></span>Writing Guide</a>
+      <a href="/mobile.html"><span class="star-dot"></span>Add Your Name</a>
+      <a href="/display.html"><span class="star-dot"></span>View the Galaxy</a>
     </div>
   </nav>
 
@@ -514,7 +564,11 @@
   var canvas = document.getElementById('starfield');
   var ctx = canvas.getContext('2d');
   var stars = [];
+  var glowStars = [];
+  var nebulae = [];
   var STAR_COUNT = 220;
+  var GLOW_STAR_COUNT = 14;
+  var NEBULA_COLORS = ['111,140,255', '255,120,190', '130,90,255'];
 
   function resize() {
     canvas.width = window.innerWidth;
@@ -532,10 +586,47 @@
         speed: 0.5 + Math.random() * 1.2
       });
     }
+
+    glowStars = [];
+    for (var g = 0; g < GLOW_STAR_COUNT; g++) {
+      glowStars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 1.2 + 1.4,
+        haloR: Math.random() * 10 + 14,
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.3 + Math.random() * 0.6
+      });
+    }
+
+    nebulae = [];
+    for (var n = 0; n < 3; n++) {
+      nebulae.push({
+        baseX: Math.random() * canvas.width,
+        baseY: Math.random() * canvas.height * 0.8,
+        r: Math.min(canvas.width, 900) * (0.35 + Math.random() * 0.25),
+        color: NEBULA_COLORS[n % NEBULA_COLORS.length],
+        driftR: 60 + Math.random() * 60,
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.00004 + Math.random() * 0.00003
+      });
+    }
   }
 
   function draw(t) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (var n = 0; n < nebulae.length; n++) {
+      var neb = nebulae[n];
+      var nx = neb.baseX + Math.cos(t * neb.speed + neb.phase) * neb.driftR;
+      var ny = neb.baseY + Math.sin(t * neb.speed * 0.8 + neb.phase) * neb.driftR;
+      var grad = ctx.createRadialGradient(nx, ny, 0, nx, ny, neb.r);
+      grad.addColorStop(0, 'rgba(' + neb.color + ', 0.08)');
+      grad.addColorStop(1, 'rgba(' + neb.color + ', 0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
     for (var i = 0; i < stars.length; i++) {
       var s = stars[i];
       var twinkle = 0.5 + 0.5 * Math.sin(t * 0.0006 * s.speed + s.phase);
@@ -544,6 +635,24 @@
       ctx.fillStyle = 'rgba(180, 200, 255, ' + (0.15 + twinkle * 0.5) + ')';
       ctx.fill();
     }
+
+    for (var j = 0; j < glowStars.length; j++) {
+      var gs = glowStars[j];
+      var glowTwinkle = 0.6 + 0.4 * Math.sin(t * 0.0004 * gs.speed + gs.phase);
+      var haloGrad = ctx.createRadialGradient(gs.x, gs.y, 0, gs.x, gs.y, gs.haloR);
+      haloGrad.addColorStop(0, 'rgba(200, 215, 255, ' + (0.25 * glowTwinkle) + ')');
+      haloGrad.addColorStop(1, 'rgba(200, 215, 255, 0)');
+      ctx.fillStyle = haloGrad;
+      ctx.beginPath();
+      ctx.arc(gs.x, gs.y, gs.haloR, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(gs.x, gs.y, gs.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(235, 240, 255, ' + (0.7 + 0.3 * glowTwinkle) + ')';
+      ctx.fill();
+    }
+
     requestAnimationFrame(draw);
   }
 
@@ -555,6 +664,39 @@
   resize();
   init();
   requestAnimationFrame(draw);
+})();
+
+(function () {
+  var container = document.getElementById('navLinks');
+  var polyline = document.getElementById('navPolyline');
+  if (!container || !polyline) return;
+
+  function drawConstellation() {
+    var dots = container.querySelectorAll('.star-dot');
+    var containerRect = container.getBoundingClientRect();
+    var points = [];
+    var tops = [];
+
+    dots.forEach(function (dot) {
+      var r = dot.getBoundingClientRect();
+      var x = r.left + r.width / 2 - containerRect.left;
+      var y = r.top + r.height / 2 - containerRect.top;
+      points.push(x + ',' + y);
+      tops.push(r.top);
+    });
+
+    var singleRow = tops.length > 0 && (Math.max.apply(null, tops) - Math.min.apply(null, tops)) < 4;
+    polyline.setAttribute('points', singleRow ? points.join(' ') : '');
+  }
+
+  var resizeTimer;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(drawConstellation, 100);
+  });
+
+  window.addEventListener('load', drawConstellation);
+  drawConstellation();
 })();
 </script>
 </body>
