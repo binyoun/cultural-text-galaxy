@@ -25,8 +25,9 @@ npm install
 npm start
 ```
 
+- Landing page (concept, ISEA 2026 context): `http://localhost:3000/`
 - Display (venue screen): `http://localhost:3000/display.html`
-- Mobile client: `http://<your-laptop-lan-ip>:3000/mobile.html` — generate a
+- Mobile client: `http://<your-laptop-lan-ip>:3000/mobile.html`, generate a
   QR code pointing at this URL for participants to scan.
 
 Both laptop and phones must be on the same local network. Find your LAN IP
@@ -46,11 +47,11 @@ with `ipconfig getifaddr en0` (or `en1` on Wi-Fi) on macOS.
 
 ## Known trade-offs / next steps
 
-- Threshold values (`WHITE_FLOOR` / `BLACK_CEIL` in `imageProcessor.js`) are
-  tuned for plain white paper and dark ink — recalibrate on-site under venue
-  lighting before the show.
+- The threshold is computed per photo with Otsu's method, so it adapts to
+  uneven lighting, but still worth a dry run under actual venue lighting
+  before the show.
 - Entries live in memory only; restarting the server clears the galaxy. Swap
   in a JSON file or SQLite write-through if persistence across a restart
   matters.
-- No moderation/approval step between upload and display — add one if the
+- No moderation/approval step between upload and display, add one if the
   audience is unvetted.

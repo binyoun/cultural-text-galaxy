@@ -4,9 +4,10 @@ const sharp = require('sharp');
  * Threshold/Crop TOP equivalent.
  * Takes a raw handwriting photo (paper + ink) and returns a PNG buffer where
  * the paper background is fully transparent and the ink strokes are tinted
- * with the participant's chosen RGB color. The alpha channel is driven by
- * how dark each pixel is (darker ink = more opaque), so soft pencil strokes
- * stay ghostly while heavy marker strokes read as solid.
+ * with the participant's chosen RGB color. The cutoff is computed per photo
+ * with Otsu's method on the normalized luminance histogram, since a fixed
+ * cutoff falls apart under real phone-camera lighting (shadows, off-white
+ * paper, color casts) even though it looks fine on a clean synthetic test.
  *
  * @param {Buffer} inputBuffer raw uploaded image
  * @param {{r:number,g:number,b:number}} color target tint
@@ -16,41 +17,41 @@ const sharp = require('sharp');
 async function processHandwriting(inputBuffer, color, maxSize = 768) {
   const { r, g, b } = color;
 
-  const image = sharp(inputBuffer).rotate(); // respect EXIF orientation
-  const resized = image.resize({
-    width: maxSize,
-    height: maxSize,
-    fit: 'inside',
-    withoutEnlargement: true,
-  });
-
-  const { data, info } = await resized
-    .ensureAlpha()
+  const { data, info } = await sharp(inputBuffer)
+    .rotate() // respect EXIF orientation
+    .resize({ width: maxSize, height: maxSize, fit: 'inside', withoutEnlargement: true })
+    .greyscale()
+    .normalize() // stretch contrast so uneven lighting doesn't wash out the ink
+    .blur(0.6) // soften JPEG/sensor noise before thresholding
     .raw()
     .toBuffer({ resolveWithObject: true });
 
-  const { width, height, channels } = info;
-  const out = Buffer.alloc(width * height * 4);
+  const { width, height } = info;
+  const pixelCount = width * height;
+  const out = Buffer.alloc(pixelCount * 4);
 
-  // Luminance threshold: treat near-white paper as background,
-  // map darker pixels to alpha so ink strokes become a soft mask.
-  const WHITE_FLOOR = 235; // pixels lighter than this are fully transparent
-  const BLACK_CEIL = 60; // pixels darker than this are fully opaque
+  const otsu = computeOtsuThreshold(data, pixelCount);
 
-  for (let i = 0; i < width * height; i++) {
-    const srcIdx = i * channels;
-    const rr = data[srcIdx];
-    const gg = data[srcIdx + 1];
-    const bb = data[srcIdx + 2];
-    const luminance = 0.299 * rr + 0.587 * gg + 0.114 * bb;
+  // No usable dark/light split found (blank or near-uniform paper) -
+  // treat the whole frame as background rather than guessing at noise.
+  if (otsu === null) {
+    return sharp(out, { raw: { width, height, channels: 4 } }).png().toBuffer();
+  }
+
+  const RAMP = 28; // soft anti-aliased edge around the computed cutoff
+  const whiteFloor = Math.min(255, otsu + RAMP);
+  const blackCeil = Math.max(0, otsu - RAMP);
+
+  for (let i = 0; i < pixelCount; i++) {
+    const luminance = data[i];
 
     let alpha;
-    if (luminance >= WHITE_FLOOR) {
+    if (luminance >= whiteFloor) {
       alpha = 0;
-    } else if (luminance <= BLACK_CEIL) {
+    } else if (luminance <= blackCeil) {
       alpha = 255;
     } else {
-      const t = (WHITE_FLOOR - luminance) / (WHITE_FLOOR - BLACK_CEIL);
+      const t = (whiteFloor - luminance) / (whiteFloor - blackCeil);
       alpha = Math.round(t * 255);
     }
 
@@ -64,6 +65,53 @@ async function processHandwriting(inputBuffer, color, maxSize = 768) {
   return sharp(out, { raw: { width, height, channels: 4 } })
     .png()
     .toBuffer();
+}
+
+/**
+ * Otsu's method: finds the luminance cutoff that best separates a bimodal
+ * histogram (paper vs. ink) by maximizing between-class variance.
+ * Returns null when the image has no meaningful dark/light split.
+ */
+function computeOtsuThreshold(greyscaleData, pixelCount) {
+  const histogram = new Array(256).fill(0);
+  let min = 255;
+  let max = 0;
+  for (let i = 0; i < pixelCount; i++) {
+    const v = greyscaleData[i];
+    histogram[v]++;
+    if (v < min) min = v;
+    if (v > max) max = v;
+  }
+
+  if (max - min < 20) return null; // effectively flat, no ink present
+
+  let sumAll = 0;
+  for (let t = 0; t < 256; t++) sumAll += t * histogram[t];
+
+  let sumB = 0;
+  let weightB = 0;
+  let maxVariance = -1;
+  let threshold = 127;
+
+  for (let t = 0; t < 256; t++) {
+    weightB += histogram[t];
+    if (weightB === 0) continue;
+
+    const weightF = pixelCount - weightB;
+    if (weightF === 0) break;
+
+    sumB += t * histogram[t];
+    const meanB = sumB / weightB;
+    const meanF = (sumAll - sumB) / weightF;
+
+    const variance = weightB * weightF * (meanB - meanF) ** 2;
+    if (variance > maxVariance) {
+      maxVariance = variance;
+      threshold = t;
+    }
+  }
+
+  return threshold;
 }
 
 function hexToRgb(hex) {

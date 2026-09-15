@@ -57,8 +57,9 @@ const nebulaMaterial = new THREE.PointsMaterial({
   blending: THREE.AdditiveBlending,
   depthWrite: false,
 });
+const NEBULA_BASELINE = 250; // idle ambient count, so the screen isn't dead at 0 participants
 const nebula = new THREE.Points(nebulaGeometry, nebulaMaterial);
-nebula.geometry.setDrawRange(0, 0); // grows as participants join
+nebula.geometry.setDrawRange(0, NEBULA_BASELINE);
 scene.add(nebula);
 
 const textureLoader = new THREE.TextureLoader();
@@ -108,7 +109,8 @@ function spawnParticle(entry) {
 
 function updateNebulaDrawRange() {
   const ratio = Math.min(1, particles.length / maxParticipantsExpected);
-  nebula.geometry.setDrawRange(0, Math.floor(NEBULA_MAX * ratio));
+  const count = NEBULA_BASELINE + Math.floor((NEBULA_MAX - NEBULA_BASELINE) * ratio);
+  nebula.geometry.setDrawRange(0, count);
 }
 
 function setCount(count, maxExpected) {
