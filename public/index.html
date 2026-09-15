@@ -46,7 +46,7 @@
 
   nav {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     padding: 20px 24px;
     max-width: 980px;
@@ -56,10 +56,6 @@
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--muted);
-  }
-
-  nav .brand {
-    font-weight: 700;
   }
 
   nav .links {
@@ -92,6 +88,10 @@
     padding-top: 12px;
     text-decoration: none;
     color: var(--muted);
+  }
+
+  nav .links a:first-child {
+    margin-left: 0;
   }
 
   nav .links a .star-dot {
@@ -170,6 +170,87 @@
     background: transparent;
     border: 1px solid var(--line);
     color: var(--text);
+  }
+
+  .hero-actions {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  .hero-actions svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .hero-actions svg polyline {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1;
+    opacity: 0.3;
+  }
+
+  .hero-action {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 22px 24px 16px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--bg-alt);
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .hero-action:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+  }
+
+  .hero-action .action-num {
+    position: absolute;
+    top: -11px;
+    left: -11px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-action .star-dot.big {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--muted);
+    box-shadow: 0 0 6px var(--muted);
+    transition: background 0.2s, box-shadow 0.2s;
+  }
+
+  .hero-action:hover .star-dot.big {
+    background: var(--accent);
+    box-shadow: 0 0 14px 3px var(--accent);
+  }
+
+  .hero-action .action-label {
+    font-size: 14px;
+    font-weight: 600;
   }
 
   section {
@@ -345,16 +426,12 @@
 
 <div class="content">
   <nav>
-    <div class="brand">Counting Cultural Stars</div>
     <div class="links" id="navLinks">
       <svg id="navConstellation"><polyline id="navPolyline" points=""></polyline></svg>
       <a href="#about"><span class="star-dot"></span>About</a>
       <a href="#concept"><span class="star-dot"></span>Concept</a>
       <a href="#isea"><span class="star-dot"></span>ISEA 2026</a>
       <a href="#organizers"><span class="star-dot"></span>Organizers</a>
-      <a href="/writing-guide.html"><span class="star-dot"></span>Writing Guide</a>
-      <a href="/mobile.html"><span class="star-dot"></span>Add Your Name</a>
-      <a href="/display.html"><span class="star-dot"></span>View the Galaxy</a>
     </div>
   </nav>
 
@@ -367,9 +444,23 @@
       their own, into animated 3D star-like constellations that drift,
       gather, and spread in shared space.
     </p>
-    <div class="cta-row">
-      <a class="btn btn-primary" href="/mobile.html">Add your text</a>
-      <a class="btn btn-secondary" href="/display.html">View the live galaxy</a>
+    <div class="hero-actions" id="heroActions">
+      <svg id="heroConstellation"><polyline id="heroPolyline" points=""></polyline></svg>
+      <a class="hero-action" href="/writing-guide.html">
+        <span class="action-num">1</span>
+        <span class="star-dot big"></span>
+        <span class="action-label">Writing Guide</span>
+      </a>
+      <a class="hero-action" href="/mobile.html">
+        <span class="action-num">2</span>
+        <span class="star-dot big"></span>
+        <span class="action-label">Add Your Text</span>
+      </a>
+      <a class="hero-action" href="/display.html">
+        <span class="action-num">3</span>
+        <span class="star-dot big"></span>
+        <span class="action-label">View the Galaxy</span>
+      </a>
     </div>
   </header>
 
@@ -667,36 +758,47 @@
 })();
 
 (function () {
-  var container = document.getElementById('navLinks');
-  var polyline = document.getElementById('navPolyline');
-  if (!container || !polyline) return;
+  function connectDots(containerId, polylineId) {
+    var container = document.getElementById(containerId);
+    var polyline = document.getElementById(polylineId);
+    if (!container || !polyline) return null;
 
-  function drawConstellation() {
-    var dots = container.querySelectorAll('.star-dot');
-    var containerRect = container.getBoundingClientRect();
-    var points = [];
-    var tops = [];
+    return function draw() {
+      var dots = container.querySelectorAll('.star-dot');
+      var containerRect = container.getBoundingClientRect();
+      var points = [];
+      var tops = [];
 
-    dots.forEach(function (dot) {
-      var r = dot.getBoundingClientRect();
-      var x = r.left + r.width / 2 - containerRect.left;
-      var y = r.top + r.height / 2 - containerRect.top;
-      points.push(x + ',' + y);
-      tops.push(r.top);
-    });
+      dots.forEach(function (dot) {
+        var r = dot.getBoundingClientRect();
+        var x = r.left + r.width / 2 - containerRect.left;
+        var y = r.top + r.height / 2 - containerRect.top;
+        points.push(x + ',' + y);
+        tops.push(r.top);
+      });
 
-    var singleRow = tops.length > 0 && (Math.max.apply(null, tops) - Math.min.apply(null, tops)) < 4;
-    polyline.setAttribute('points', singleRow ? points.join(' ') : '');
+      var singleRow = tops.length > 0 && (Math.max.apply(null, tops) - Math.min.apply(null, tops)) < 4;
+      polyline.setAttribute('points', singleRow ? points.join(' ') : '');
+    };
+  }
+
+  var drawers = [
+    connectDots('navLinks', 'navPolyline'),
+    connectDots('heroActions', 'heroPolyline')
+  ].filter(Boolean);
+
+  function drawAll() {
+    drawers.forEach(function (draw) { draw(); });
   }
 
   var resizeTimer;
   window.addEventListener('resize', function () {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(drawConstellation, 100);
+    resizeTimer = setTimeout(drawAll, 100);
   });
 
-  window.addEventListener('load', drawConstellation);
-  drawConstellation();
+  window.addEventListener('load', drawAll);
+  drawAll();
 })();
 </script>
 </body>
