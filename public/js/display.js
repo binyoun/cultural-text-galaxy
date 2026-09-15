@@ -2,7 +2,8 @@ import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { createOrbitState, stepVortex, regionToAngle, regionLabelAngle, REGIONS, VORTEX_CONSTANTS } from './vortex.js';
+import { AfterimagePass } from 'three/addons/postprocessing/AfterimagePass.js';
+import { createOrbitState, stepVortex, regionToAngle, VORTEX_CONSTANTS } from './vortex.js';
 
 const MAX_PARTICIPANTS_EXPECTED_DEFAULT = 20;
 
@@ -21,6 +22,7 @@ const urlParams = new URLSearchParams(window.location.search);
 let operatorRotationMultiplier = clampNum(parseFloat(urlParams.get('rotation')), 0.2, 3, 1);
 let operatorBloomOffset = clampNum(parseFloat(urlParams.get('bloom')), -0.5, 1.5, 0);
 let operatorNebulaBaseline = clampNum(parseInt(urlParams.get('nebula'), 10), 0, 800, 250);
+const operatorTrailDamp = clampNum(parseFloat(urlParams.get('trail')), 0, 0.97, 0.85);
 
 const scene = new THREE.Scene();
 scene.fog = new THREE.FogExp2(0x02010a, 0.028);
@@ -42,6 +44,13 @@ renderer.setClearColor(0x02010a, 1);
 // Render & Bloom TOP equivalent: layer-blend + dual-blur glow pass.
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
+
+// Trailing afterimage: blends each frame with the last so moving stars and
+// dust leave a soft fading streak instead of a flat, instant redraw. This is
+// the main fix for the scene reading as flat, motion is what gives it depth.
+const afterimagePass = new AfterimagePass(operatorTrailDamp);
+composer.addPass(afterimagePass);
+
 const bloomPass = new UnrealBloomPass(
   new THREE.Vector2(window.innerWidth, window.innerHeight),
   1.4, // strength
@@ -75,55 +84,6 @@ const nebula = new THREE.Points(nebulaGeometry, nebulaMaterial);
 nebula.geometry.setDrawRange(0, operatorNebulaBaseline);
 scene.add(nebula);
 
-// Sector labels: makes the field-allocation choice on the mobile form
-// visible here, without this, picking a region has no discoverable
-// effect. Text sprites live in `scene` so they rotate with the vortex,
-// staying aligned with the region's actual current sky position.
-const REGION_LABEL_TEXT = {
-  asia: 'Asia',
-  'middle-east': 'Middle East',
-  africa: 'Africa',
-  europe: 'Europe',
-  americas: 'Americas',
-  oceania: 'Oceania',
-};
-const LABEL_RADIUS = 17;
-
-function createTextSprite(text) {
-  const canvasEl = document.createElement('canvas');
-  const ctx = canvasEl.getContext('2d');
-  const fontSize = 48;
-  ctx.font = `${fontSize}px -apple-system, sans-serif`;
-  const width = Math.ceil(ctx.measureText(text).width) + 40;
-  const height = fontSize + 40;
-  canvasEl.width = width;
-  canvasEl.height = height;
-
-  ctx.font = `${fontSize}px -apple-system, sans-serif`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillStyle = 'rgba(180, 200, 255, 0.35)';
-  ctx.fillText(text, width / 2, height / 2);
-
-  const texture = new THREE.CanvasTexture(canvasEl);
-  const material = new THREE.SpriteMaterial({
-    map: texture,
-    transparent: true,
-    depthWrite: false,
-  });
-  const sprite = new THREE.Sprite(material);
-  const aspect = width / height;
-  sprite.scale.set(3 * aspect, 3, 1);
-  return sprite;
-}
-
-for (const region of REGIONS) {
-  const angle = regionLabelAngle(region);
-  const sprite = createTextSprite(REGION_LABEL_TEXT[region]);
-  sprite.position.set(Math.cos(angle) * LABEL_RADIUS, 0, Math.sin(angle) * LABEL_RADIUS);
-  scene.add(sprite);
-}
-
 // Central flare: a bright core at the pole every orbit converges toward
 // but never reaches, the fixed point the Three Enclosures research figure
 // describes, made visible instead of left as an empty "keep clear" gap.
@@ -137,25 +97,13 @@ function createFlareTexture() {
   const ctx = canvasEl.getContext('2d');
 
   const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, size / 2);
-  glow.addColorStop(0, 'rgba(255,255,255,1)');
-  glow.addColorStop(0.15, 'rgba(220,230,255,0.9)');
-  glow.addColorStop(0.4, 'rgba(150,180,255,0.25)');
-  glow.addColorStop(1, 'rgba(150,180,255,0)');
+  glow.addColorStop(0, 'rgba(255,255,255,0.9)');
+  glow.addColorStop(0.12, 'rgba(220,230,255,0.7)');
+  glow.addColorStop(0.35, 'rgba(150,180,255,0.2)');
+  glow.addColorStop(0.7, 'rgba(120,150,255,0.05)');
+  glow.addColorStop(1, 'rgba(120,150,255,0)');
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, size, size);
-
-  ctx.strokeStyle = 'rgba(255,255,255,0.5)';
-  ctx.lineWidth = 2;
-  for (const angle of [0, Math.PI / 2]) {
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(angle);
-    ctx.beginPath();
-    ctx.moveTo(-size / 2, 0);
-    ctx.lineTo(size / 2, 0);
-    ctx.stroke();
-    ctx.restore();
-  }
 
   return new THREE.CanvasTexture(canvasEl);
 }
@@ -373,12 +321,14 @@ const operatorPanel = document.getElementById('operatorPanel');
 const opRotation = document.getElementById('opRotation');
 const opBloom = document.getElementById('opBloom');
 const opNebula = document.getElementById('opNebula');
+const opTrail = document.getElementById('opTrail');
 const opCopyLink = document.getElementById('opCopyLink');
 const opCopyStatus = document.getElementById('opCopyStatus');
 
 opRotation.value = operatorRotationMultiplier;
 opBloom.value = operatorBloomOffset;
 opNebula.value = operatorNebulaBaseline;
+opTrail.value = operatorTrailDamp;
 
 window.addEventListener('keydown', (e) => {
   if (e.key === '`') {
@@ -399,11 +349,16 @@ opNebula.addEventListener('input', () => {
   updateNebulaDrawRange();
 });
 
+opTrail.addEventListener('input', () => {
+  afterimagePass.uniforms['damp'].value = parseFloat(opTrail.value);
+});
+
 opCopyLink.addEventListener('click', async () => {
   const url = new URL(window.location.href);
   url.searchParams.set('rotation', operatorRotationMultiplier);
   url.searchParams.set('bloom', operatorBloomOffset);
   url.searchParams.set('nebula', operatorNebulaBaseline);
+  url.searchParams.set('trail', afterimagePass.uniforms['damp'].value);
   try {
     await navigator.clipboard.writeText(url.toString());
     opCopyStatus.textContent = 'Copied.';
