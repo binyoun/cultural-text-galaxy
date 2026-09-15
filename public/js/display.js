@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { createOrbitState, stepVortex, originToSectorAngle, VORTEX_CONSTANTS } from './vortex.js';
+import { createOrbitState, stepVortex, regionToAngle, VORTEX_CONSTANTS } from './vortex.js';
 
 const MAX_PARTICIPANTS_EXPECTED_DEFAULT = 20;
 
@@ -113,11 +113,9 @@ function spawnParticle(entry) {
 
     scene.add(sprite);
 
-    // Field allocation: an entry with a place noted lands in that place's
-    // sky sector instead of a purely random angle.
-    const angleOverride = entry.origin
-      ? originToSectorAngle(entry.origin.trim().toLowerCase())
-      : null;
+    // Field allocation: an entry with a region picked lands in that
+    // region's sky sector instead of a purely random angle.
+    const angleOverride = entry.region ? regionToAngle(entry.region) : null;
 
     particles.push({
       sprite,

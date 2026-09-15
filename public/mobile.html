@@ -67,9 +67,21 @@
     <input id="cameraInput" type="file" accept="image/*" capture="environment" hidden />
     <input id="uploadInput" type="file" accept="image/*" hidden />
 
+    <div class="field">
+      <div class="field-label">Region (optional, sets where your star sits)</div>
+      <div class="region-grid" id="regionGrid">
+        <button type="button" class="region-btn" data-region="asia">Asia</button>
+        <button type="button" class="region-btn" data-region="middle-east">Middle East</button>
+        <button type="button" class="region-btn" data-region="africa">Africa</button>
+        <button type="button" class="region-btn" data-region="europe">Europe</button>
+        <button type="button" class="region-btn" data-region="americas">Americas</button>
+        <button type="button" class="region-btn" data-region="oceania">Oceania</button>
+      </div>
+    </div>
+
     <label class="field">
-      Place or origin (optional)
-      <input id="origin-input" type="text" maxlength="60" placeholder="a city, a country, a home" />
+      Name your place (optional)
+      <input id="place-input" type="text" maxlength="60" placeholder="a city, a home, in your own words" />
     </label>
 
     <label class="field">

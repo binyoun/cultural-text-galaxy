@@ -15,7 +15,8 @@ const retakeBtn = document.getElementById('retakeBtn');
 const cameraInput = document.getElementById('cameraInput'); // native camera app fallback
 const uploadInput = document.getElementById('uploadInput'); // gallery / file picker
 
-const originInput = document.getElementById('origin-input');
+const regionButtons = document.querySelectorAll('.region-btn');
+const placeInput = document.getElementById('place-input');
 const colorInput = document.getElementById('color-input');
 const transparencyInput = document.getElementById('transparency-input');
 const intensityInput = document.getElementById('intensity-input');
@@ -25,6 +26,20 @@ const countEl = document.getElementById('count');
 
 let selectedFile = null;
 let mediaStream = null;
+let selectedRegion = '';
+
+regionButtons.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const isAlreadySelected = btn.classList.contains('selected');
+    regionButtons.forEach((b) => b.classList.remove('selected'));
+    if (isAlreadySelected) {
+      selectedRegion = '';
+    } else {
+      btn.classList.add('selected');
+      selectedRegion = btn.dataset.region;
+    }
+  });
+});
 
 function showPreCapture() {
   preCapture.hidden = false;
@@ -128,7 +143,8 @@ submitBtn.addEventListener('click', async () => {
   formData.append('color', colorInput.value);
   formData.append('transparency', transparencyInput.value);
   formData.append('intensity', intensityInput.value);
-  formData.append('origin', originInput.value);
+  formData.append('region', selectedRegion);
+  formData.append('place', placeInput.value);
 
   try {
     const res = await fetch('/api/submit', { method: 'POST', body: formData });
@@ -146,6 +162,9 @@ function resetForm() {
   selectedFile = null;
   cameraInput.value = '';
   uploadInput.value = '';
+  placeInput.value = '';
+  selectedRegion = '';
+  regionButtons.forEach((b) => b.classList.remove('selected'));
   submitBtn.disabled = true;
   showPreCapture();
 }

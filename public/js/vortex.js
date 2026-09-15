@@ -29,21 +29,27 @@ export function createOrbitState(seed = Math.random(), angleOverride = null) {
   };
 }
 
-/**
- * Field allocation (bunya): hashes a place name into one of twelve sky
- * sectors, matching the chart's historical Yeolcha divisions, then picks a
- * random angle within that sector. Entries from the same place cluster in
- * the same region of sky instead of landing on the exact same point or
- * scattering uniformly at random.
- */
-export function originToSectorAngle(origin) {
-  let hash = 0;
-  for (let i = 0; i < origin.length; i++) {
-    hash = (hash * 31 + origin.charCodeAt(i)) >>> 0;
-  }
-  const sector = hash % SECTOR_COUNT;
+// Field allocation (bunya): each region is given a fixed starting sector out
+// of the twelve Yeolcha divisions, two sectors wide, so a region's stars
+// cluster in the same part of the sky instead of scattering at random. A
+// fixed lookup, rather than hashing whatever free text someone typed, keeps
+// the clustering consistent, "Seoul" and "seoul" would hash to different
+// buckets, but everyone who picks Asia lands in the same band.
+const REGION_SECTOR_START = {
+  asia: 0,
+  'middle-east': 2,
+  africa: 4,
+  europe: 6,
+  americas: 8,
+  oceania: 10,
+};
+
+export function regionToAngle(region) {
+  const start = REGION_SECTOR_START[region];
+  if (start === undefined) return null;
+
   const sectorWidth = (Math.PI * 2) / SECTOR_COUNT;
-  return sector * sectorWidth + Math.random() * sectorWidth;
+  return start * sectorWidth + Math.random() * sectorWidth * 2;
 }
 
 /**

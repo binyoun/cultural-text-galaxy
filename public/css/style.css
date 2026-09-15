@@ -319,6 +319,38 @@ body.mobile h1 {
   margin-top: 6px;
 }
 
+.field-label {
+  font-size: 13px;
+  color: #b9bfe6;
+}
+
+.region-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.region-btn {
+  padding: 10px 6px;
+  border: 1px solid #3a3f6b;
+  border-radius: 8px;
+  background: #0a0c1e;
+  color: #eef0ff;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.region-btn:hover {
+  border-color: #6c7bff;
+}
+
+.region-btn.selected {
+  border-color: #6c7bff;
+  background: #1a1f4a;
+  color: #8fd6ff;
+}
+
 #submit-btn {
   width: 100%;
   padding: 14px;

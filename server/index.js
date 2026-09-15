@@ -10,6 +10,7 @@ const { processHandwriting, hexToRgb } = require('./imageProcessor');
 const PORT = process.env.PORT || 3000;
 const UPLOAD_DIR = path.join(__dirname, '..', 'uploads');
 const MAX_PARTICIPANTS_EXPECTED = 20; // used to normalize the density factor
+const VALID_REGIONS = new Set(['asia', 'middle-east', 'africa', 'europe', 'americas', 'oceania']);
 
 fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
@@ -49,7 +50,9 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
     const color = hexToRgb(req.body.color || '#ffffff');
     const transparency = clamp(parseFloat(req.body.transparency), 0.1, 1.0, 1.0);
     const intensity = clamp(parseFloat(req.body.intensity), 1.0, 5.0, 1.0);
-    const origin = (req.body.origin || '').toString().trim().slice(0, 60);
+    const requestedRegion = (req.body.region || '').toString().trim().toLowerCase();
+    const region = VALID_REGIONS.has(requestedRegion) ? requestedRegion : '';
+    const place = (req.body.place || '').toString().trim().slice(0, 60);
 
     const pngBuffer = await processHandwriting(req.file.buffer, color);
 
@@ -63,7 +66,8 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
       color: req.body.color || '#ffffff',
       transparency,
       intensity,
-      origin,
+      region,
+      place,
       createdAt: Date.now(),
     };
 
