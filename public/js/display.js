@@ -22,7 +22,7 @@ const urlParams = new URLSearchParams(window.location.search);
 let operatorRotationMultiplier = clampNum(parseFloat(urlParams.get('rotation')), 0.2, 3, 1);
 let operatorBloomOffset = clampNum(parseFloat(urlParams.get('bloom')), -0.5, 1.5, 0);
 let operatorNebulaBaseline = clampNum(parseInt(urlParams.get('nebula'), 10), 0, 800, 250);
-const operatorTrailDamp = clampNum(parseFloat(urlParams.get('trail')), 0, 0.97, 0.85);
+const operatorTrailDamp = clampNum(parseFloat(urlParams.get('trail')), 0, 0.97, 0.35);
 
 const scene = new THREE.Scene();
 scene.fog = new THREE.FogExp2(0x02010a, 0.028);
@@ -53,9 +53,9 @@ composer.addPass(afterimagePass);
 
 const bloomPass = new UnrealBloomPass(
   new THREE.Vector2(window.innerWidth, window.innerHeight),
-  1.4, // strength
+  1.0, // strength, lower base so body text isn't washed out at rest
   0.9, // radius
-  0.15 // threshold
+  0.35 // threshold, raised so only genuinely bright spots (the flare) bloom hard
 );
 composer.addPass(bloomPass);
 
@@ -134,13 +134,16 @@ function spawnParticle(entry) {
       map: texture,
       transparent: true,
       opacity: entry.transparency,
-      blending: THREE.AdditiveBlending,
+      blending: THREE.NormalBlending,
       depthWrite: false,
     });
 
-    // Over-exposure: push color channels above 1.0 via tone-mapped intensity,
-    // bloom pass then reads the brightness and blooms it out.
-    const boost = entry.intensity; // 1.0 (standard) .. 5.0 (over-exposed)
+    // Intensity now mostly speaks through size (magnitudeScale below), matching
+    // the chart's own convention. Keep a mild color boost so bloom still reads
+    // brighter entries as brighter, but additive blending plus a boost near
+    // 5x was blowing every glyph out to a flat white blob, unreadable. Normal
+    // blending above keeps letterforms crisp; this stays a gentle nudge.
+    const boost = 1 + (entry.intensity - 1) * 0.25; // 1.0 (standard) .. 2.0 (glowing)
     material.color.setScalar(boost);
 
     const sprite = new THREE.Sprite(material);
@@ -309,7 +312,7 @@ function animate() {
   flareMaterial.opacity = 0.6 + density * 0.4;
 
   scene.rotation.y += 0.02 * dt * (0.5 + density * 0.5) * operatorRotationMultiplier;
-  bloomPass.strength = Math.max(0, 1.1 + density * 0.9 + operatorBloomOffset);
+  bloomPass.strength = Math.max(0, 0.7 + density * 0.5 + operatorBloomOffset);
 
   composer.render();
 }
