@@ -33,6 +33,25 @@ npm start
 Both laptop and phones must be on the same local network. Find your LAN IP
 with `ipconfig getifaddr en0` (or `en1` on Wi-Fi) on macOS.
 
+## Sharing a demo link with teammates
+
+For the actual workshop, keep running it locally, phones on venue wifi
+talking to the laptop directly, no internet dependency. But to let a
+teammate see the working pages without being on the same network, deploy a
+demo copy:
+
+1. Go to [render.com](https://render.com) and sign in with GitHub.
+2. New + &rarr; Blueprint, pick the `cultural-text-galaxy` repo. Render reads
+   `render.yaml` in this repo and configures the service automatically.
+3. Deploy. Render gives you a public `https://<something>.onrender.com` URL,
+   share that.
+
+Free tier notes: the server sleeps after inactivity (first load after a
+while takes ~30s to wake up), and the filesystem resets on every redeploy or
+restart, so uploaded entries there are temporary, same limitation as the
+in-memory entries list has locally. Fine for a demo link, not for the event
+itself.
+
 ## How it works
 
 1. Participant photographs handwriting on the mobile page and picks color,
