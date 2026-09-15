@@ -1,5 +1,8 @@
 # Communal Volumetric Cultural Text Galaxy
 
+**Live site: https://cultural-text-galaxy.onrender.com** (this is the link
+to share, not the github.com repo page, which only shows code)
+
 Participatory installation: ~20 participants photograph handwritten words in
 their own script, tint and glow them, and watch them spiral into a shared 3D
 vortex. Runs two ways:
