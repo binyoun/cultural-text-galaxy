@@ -245,13 +245,18 @@
     <h1>Writing Guide</h1>
     <h2>How a name becomes a photograph becomes two things</h2>
     <div class="pipeline">
-      Each participant writes their own name on their own paper, following
-      this guide, then photographs it once. <strong>That one photograph</strong>
-      goes two places: into TouchDesigner for their individual piece, and
-      into the shared pool for the communal work shown at the workshop and
-      kept afterward as documentation. The writing formation has to hold up
-      at both scales, a single name on its own, and dozens of names together,
-      so it is built on a form that already does exactly that.
+      Each participant writes their own cultural text on their own paper,
+      following this guide, then photographs it once. Not necessarily a
+      name. Yoon Dong-ju's poem counts memory, love, loneliness, longing,
+      poetry, and his mother, before it ever gets to naming people and
+      places. Anything from that same list is fair to write here: a name,
+      a place, a word for someone, a feeling that means home.
+      <strong>That one photograph</strong> goes two places: into
+      TouchDesigner for the individual piece, and into the shared pool for
+      the communal work shown at the workshop and kept afterward as
+      documentation. The writing formation has to hold up at both scales,
+      one person's text on its own, and dozens of them together, so it is
+      built on a form that already does exactly that.
     </div>
 
     <h2>Research Foundation: Cheonsang Yeolcha Bunyajido (천상열차분야지도)</h2>
@@ -351,7 +356,7 @@
         </svg>
         <h4>3. Two epochs, one object</h4>
         <p class="caption">Precession dating shows the equator-band stars still match roughly first-century positions, copied forward through Chinese astronomical records, while the region near the pole was recalculated for 1395.</p>
-        <p class="implication">Design: a participant who knows an older or ancestral form of their name may note it beside the one they write, the same layering the chart itself carries.</p>
+        <p class="implication">Design: a participant whose word has an older or ancestral form, a name, a place, a phrase said differently by a grandparent, may note it beside the one they write, the same layering the chart itself carries.</p>
       </div>
 
       <div class="figure-card">
@@ -381,7 +386,7 @@
             </g>
           </defs>
           <use href="#miniStar" transform="translate(70,110) scale(1.6)"/>
-          <text x="70" y="165" text-anchor="middle" font-size="11" fill="#999">one name</text>
+          <text x="70" y="165" text-anchor="middle" font-size="11" fill="#999">one person's text</text>
           <line x1="120" y1="110" x2="175" y2="110" stroke="#6c7bff" stroke-width="1.5"/>
           <path d="M 168 104 L 178 110 L 168 116" fill="none" stroke="#6c7bff" stroke-width="1.5"/>
           <use href="#miniStar" transform="translate(320,60) scale(0.8)"/>
@@ -394,7 +399,7 @@
           <text x="325" y="205" text-anchor="middle" font-size="11" fill="#999">the communal galaxy</text>
         </svg>
         <h4>5. One chart, many</h4>
-        <p class="caption">A single name written radially around a personal center is one small Cheonsang Yeolcha Bunyajido. Many of them, gathered, is the same structure at the scale of the room, and then the display.</p>
+        <p class="caption">A single person's text, written radially around a personal center, is one small Cheonsang Yeolcha Bunyajido. Many of them, gathered, is the same structure at the scale of the room, and then the display.</p>
       </div>
     </div>
 
@@ -412,11 +417,18 @@
     <p>Print this at table signage size. Plain language, minimal text, works for participants across languages.</p>
     <div class="card">
       <div class="eyebrow">Communal Volumetric Cultural Text Galaxy</div>
-      <h3>How to write your name</h3>
+      <h3>How to write your text</h3>
+      <p style="font-size:13px; color:#555; margin:-6px 0 16px;">
+        Not sure what to write? The poem this workshop comes from counts
+        memory, love, loneliness, longing, poetry, and a mother, before it
+        ever names a single person or place. Any of these can be yours:
+        a name, a place, a word for someone you love, a feeling that
+        means home.
+      </p>
       <ol>
-        <li>Mark a small center point on your paper. Leave it empty. It is your fixed point, your pole star.</li>
-        <li>Write your name one character or syllable at a time, each one on its own ray, spreading outward from that center like a clock face.</li>
-        <li>Let the top of each character point outward, away from the center.</li>
+        <li>Mark a small center point on your paper. Leave it empty. It is your fixed point, the pole you write from, the same position Dong-ju writes from in the poem.</li>
+        <li>Write your text one meaningful piece at a time, a character, a syllable, or a whole word, each piece on its own ray, spreading outward from that center like a clock face.</li>
+        <li>Let the top of each piece point outward, away from the center.</li>
         <li>Write in your own language, your own script. Nothing here needs translating.</li>
         <li>When you are done, photograph the whole page. This one photograph becomes both your individual piece and part of the shared galaxy.</li>
       </ol>
@@ -431,12 +443,13 @@
     <h2>Personal Template</h2>
     <p>
       One of these per participant, not a shared sheet. Set the ray count to
-      match how many characters or syllables are in the name being written,
-      then print or trace from it directly.
+      match how many meaningful pieces, characters, syllables, or whole
+      words, are in the text being written, then print or trace from it
+      directly.
     </p>
     <div class="underlay-wrap">
       <div class="ray-control no-print">
-        Characters in the name:
+        Pieces in your text:
         <input type="number" id="rayCountInput" min="2" max="14" value="4" />
         <span id="rayCountLabel"></span>
       </div>
@@ -507,7 +520,7 @@
       x: cx, y: cy - outerR + 40, fill: '#6c7bff', 'font-size': 14,
       'text-anchor': 'middle', 'font-weight': 'bold'
     });
-    startLabel.textContent = 'first character, write outward';
+    startLabel.textContent = 'first piece, write outward';
     svg.appendChild(startLabel);
 
     var centerLabel = el('text', {
