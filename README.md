@@ -2,11 +2,16 @@
 
 Participatory installation: ~20 participants photograph handwritten words in
 their own script, tint and glow them, and watch them spiral into a shared 3D
-vortex on the venue screen.
+vortex. Runs two ways:
+
+- **Locally**, phones on the same wifi as a laptop, no internet dependency.
+  Good for an in-person table or a quick test.
+- **Deployed online** (Render + Supabase, see below), each participant opens
+  the pages themselves over the internet. This is the setup for an online
+  workshop.
 
 Migrated from a TouchDesigner concept (Metaball/Force SOP + Geometry
-Instancing) to a web stack that runs on a laptop with no venue network
-dependency beyond local wifi.
+Instancing) to a web stack.
 
 ## Architecture mapping
 
@@ -33,24 +38,60 @@ npm start
 Both laptop and phones must be on the same local network. Find your LAN IP
 with `ipconfig getifaddr en0` (or `en1` on Wi-Fi) on macOS.
 
-## Sharing a demo link with teammates
+## Deploying for an online workshop
 
-For the actual workshop, keep running it locally, phones on venue wifi
-talking to the laptop directly, no internet dependency. But to let a
-teammate see the working pages without being on the same network, deploy a
-demo copy:
+Each participant opens `display.html` and `mobile.html` themselves over the
+internet, so this needs a real public URL, not a LAN IP. Two pieces: Render
+runs the server, Supabase makes entries and images survive a restart or
+redeploy (Render's own disk is wiped on every deploy, so without this,
+finishing a deploy mid-workshop would erase everyone's submissions).
 
-1. Go to [render.com](https://render.com) and sign in with GitHub.
-2. New + &rarr; Blueprint, pick the `cultural-text-galaxy` repo. Render reads
-   `render.yaml` in this repo and configures the service automatically.
-3. Deploy. Render gives you a public `https://<something>.onrender.com` URL,
-   share that.
+### 1. Supabase (persistence)
 
-Free tier notes: the server sleeps after inactivity (first load after a
-while takes ~30s to wake up), and the filesystem resets on every redeploy or
-restart, so uploaded entries there are temporary, same limitation as the
-in-memory entries list has locally. Fine for a demo link, not for the event
-itself.
+In the [Supabase dashboard](https://supabase.com), create a project (or
+reuse one), then in the SQL Editor run:
+
+```sql
+create table if not exists entries (
+  id uuid primary key,
+  url text not null,
+  color text not null,
+  transparency numeric not null,
+  intensity numeric not null,
+  region text default '',
+  place text default '',
+  created_at timestamptz not null default now()
+);
+```
+
+Then Storage &rarr; New bucket &rarr; name it `handwriting-uploads` &rarr;
+toggle **Public bucket** on (the display page loads images directly from
+this bucket, so it needs to be publicly readable).
+
+From Project Settings &rarr; API, copy the **Project URL** and the
+**service_role key** (not the anon key, the server needs full write access).
+
+### 2. Render (hosting)
+
+1. [render.com](https://render.com) &rarr; sign in with GitHub &rarr; New +
+   &rarr; Blueprint &rarr; pick the `cultural-text-galaxy` repo. Render reads
+   `render.yaml` and configures the service automatically.
+2. Before the first deploy (or after, then redeploy), add two environment
+   variables under the service's Environment tab:
+   - `SUPABASE_URL` = the Project URL from step 1
+   - `SUPABASE_SERVICE_KEY` = the service_role key from step 1
+3. Deploy. Render gives you a public `https://<something>.onrender.com` URL.
+   Share `<that-url>/mobile.html` and `<that-url>/display.html` directly.
+
+Without those two environment variables set, the app still runs fine, it
+just falls back to in-memory entries and local disk, the original local-dev
+behavior, so nothing breaks if you deploy before Supabase is ready, it just
+won't persist yet.
+
+Free tier notes: the server sleeps after ~15 minutes of no traffic and takes
+about 30s to wake on the next request. For a live workshop, either keep a
+tab open against the URL beforehand to keep it warm, or upgrade to Render's
+paid "always on" tier for that session.
 
 ## How it works
 
@@ -69,8 +110,9 @@ itself.
 - The threshold is computed per photo with Otsu's method, so it adapts to
   uneven lighting, but still worth a dry run under actual venue lighting
   before the show.
-- Entries live in memory only; restarting the server clears the galaxy. Swap
-  in a JSON file or SQLite write-through if persistence across a restart
-  matters.
+- Entries persist across restarts when `SUPABASE_URL`/`SUPABASE_SERVICE_KEY`
+  are set (see "Deploying for an online workshop"). Without them, entries
+  are in-memory only and a restart clears the galaxy, fine for local dev,
+  not for the actual event.
 - No moderation/approval step between upload and display, add one if the
   audience is unvetted.

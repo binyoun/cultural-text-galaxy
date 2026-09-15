@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
@@ -6,6 +8,7 @@ const multer = require('multer');
 const http = require('http');
 const { Server } = require('socket.io');
 const { processHandwriting, hexToRgb } = require('./imageProcessor');
+const persistence = require('./persistence');
 
 const PORT = process.env.PORT || 3000;
 const UPLOAD_DIR = path.join(__dirname, '..', 'uploads');
@@ -58,11 +61,18 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
 
     const id = crypto.randomUUID();
     const filename = `${id}.png`;
-    fs.writeFileSync(path.join(UPLOAD_DIR, filename), pngBuffer);
+
+    let url;
+    if (persistence.isConfigured) {
+      url = await persistence.uploadImage(filename, pngBuffer);
+    } else {
+      fs.writeFileSync(path.join(UPLOAD_DIR, filename), pngBuffer);
+      url = `/uploads/${filename}`;
+    }
 
     const entry = {
       id,
-      url: `/uploads/${filename}`,
+      url,
       color: req.body.color || '#ffffff',
       transparency,
       intensity,
@@ -70,6 +80,10 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
       place,
       createdAt: Date.now(),
     };
+
+    if (persistence.isConfigured) {
+      await persistence.insertEntry(entry);
+    }
 
     entries.push(entry);
 
@@ -92,8 +106,19 @@ io.on('connection', (socket) => {
   socket.emit('count', { count: entries.length, maxParticipantsExpected: MAX_PARTICIPANTS_EXPECTED });
 });
 
-server.listen(PORT, () => {
-  console.log(`Cultural Text Galaxy server running:`);
-  console.log(`  Display (venue screen): http://localhost:${PORT}/display.html`);
-  console.log(`  Mobile client (share via QR): http://<your-lan-ip>:${PORT}/mobile.html`);
-});
+async function start() {
+  if (persistence.isConfigured) {
+    const existing = await persistence.fetchAllEntries();
+    entries.push(...existing);
+    console.log(`Rehydrated ${existing.length} entries from Supabase.`);
+  }
+
+  server.listen(PORT, () => {
+    console.log(`Cultural Text Galaxy server running:`);
+    console.log(`  Display (venue screen): http://localhost:${PORT}/display.html`);
+    console.log(`  Mobile client (share via QR): http://<your-lan-ip>:${PORT}/mobile.html`);
+    console.log(`  Persistence: ${persistence.isConfigured ? 'Supabase' : 'in-memory only (local dev)'}`);
+  });
+}
+
+start();

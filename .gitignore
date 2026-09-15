@@ -3,3 +3,4 @@ uploads/*.png
 !uploads/.gitkeep
 .DS_Store
 *.log
+.env

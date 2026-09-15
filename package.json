@@ -9,6 +9,8 @@
     "dev": "nodemon server/index.js"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.116.0",
+    "dotenv": "^17.4.2",
     "express": "^4.19.2",
     "multer": "^2.0.0",
     "sharp": "^0.35.4",
