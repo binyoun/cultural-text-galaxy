@@ -124,6 +124,51 @@ for (const region of REGIONS) {
   scene.add(sprite);
 }
 
+// Central flare: a bright core at the pole every orbit converges toward
+// but never reaches, the fixed point the Three Enclosures research figure
+// describes, made visible instead of left as an empty "keep clear" gap.
+function createFlareTexture() {
+  const size = 256;
+  const cx = size / 2;
+  const cy = size / 2;
+  const canvasEl = document.createElement('canvas');
+  canvasEl.width = size;
+  canvasEl.height = size;
+  const ctx = canvasEl.getContext('2d');
+
+  const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, size / 2);
+  glow.addColorStop(0, 'rgba(255,255,255,1)');
+  glow.addColorStop(0.15, 'rgba(220,230,255,0.9)');
+  glow.addColorStop(0.4, 'rgba(150,180,255,0.25)');
+  glow.addColorStop(1, 'rgba(150,180,255,0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, size, size);
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+  ctx.lineWidth = 2;
+  for (const angle of [0, Math.PI / 2]) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(angle);
+    ctx.beginPath();
+    ctx.moveTo(-size / 2, 0);
+    ctx.lineTo(size / 2, 0);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  return new THREE.CanvasTexture(canvasEl);
+}
+
+const flareMaterial = new THREE.SpriteMaterial({
+  map: createFlareTexture(),
+  transparent: true,
+  blending: THREE.AdditiveBlending,
+  depthWrite: false,
+});
+const flareSprite = new THREE.Sprite(flareMaterial);
+scene.add(flareSprite);
+
 const textureLoader = new THREE.TextureLoader();
 const particles = []; // { sprite, orbit, baseScale, intensity }
 
@@ -311,6 +356,9 @@ function animate() {
 
     applyGravityWell(p.sprite, dt);
   }
+
+  flareSprite.scale.setScalar(3.5 + density * 2.5);
+  flareMaterial.opacity = 0.6 + density * 0.4;
 
   scene.rotation.y += 0.02 * dt * (0.5 + density * 0.5) * operatorRotationMultiplier;
   bloomPass.strength = Math.max(0, 1.1 + density * 0.9 + operatorBloomOffset);
