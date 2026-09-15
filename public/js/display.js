@@ -194,7 +194,7 @@ const flareSprite = new THREE.Sprite(flareMaterial);
 scene.add(flareSprite);
 
 const textureLoader = new THREE.TextureLoader();
-const particles = []; // { sprite, orbit, baseScale, intensity }
+const particles = []; // { sprite, orbit, baseScale, aspect, magnitudeScale, tintColor, trailGeometry, trailPoints }
 
 // Constellation lines: "Names are like stars. They can be connected with
 // others in cultural constellations." Nothing in the scene actually proved
@@ -205,9 +205,9 @@ const particles = []; // { sprite, orbit, baseScale, intensity }
 let constellationPairs = []; // [[indexA, indexB], ...]
 const constellationGeometry = new THREE.BufferGeometry();
 const constellationMaterial = new THREE.LineBasicMaterial({
-  color: 0x8fa2ff,
+  vertexColors: true,
   transparent: true,
-  opacity: 0.25,
+  opacity: 0.6,
   blending: THREE.AdditiveBlending,
   depthWrite: false,
 });
@@ -237,7 +237,24 @@ function recomputeConstellation() {
   }
 
   const positions = new Float32Array(constellationPairs.length * 6);
+  const colors = new Float32Array(constellationPairs.length * 6);
+  // A flat single-color line reads as a diagram, not a connection between
+  // two specific stars. Each endpoint carries that star's own tint, GPU
+  // interpolation blends across the segment, so the line itself carries
+  // both colors, dimmed so the stars stay the visual focus.
+  const DIM = 0.55;
+  constellationPairs.forEach(([a, b], i) => {
+    const ca = particles[a].tintColor;
+    const cb = particles[b].tintColor;
+    colors[i * 6] = ca.r * DIM;
+    colors[i * 6 + 1] = ca.g * DIM;
+    colors[i * 6 + 2] = ca.b * DIM;
+    colors[i * 6 + 3] = cb.r * DIM;
+    colors[i * 6 + 4] = cb.g * DIM;
+    colors[i * 6 + 5] = cb.b * DIM;
+  });
   constellationGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  constellationGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 }
 
 function updateConstellationPositions() {
@@ -258,6 +275,47 @@ function updateConstellationPositions() {
 }
 
 setInterval(recomputeConstellation, 4000);
+
+// Per-star trails: the global afterimage pass is a flat screen-space blur,
+// it can't tell a near star's motion from a far one's, and turning it up
+// enough to matter smeared the text unreadable. A trail that actually
+// belongs to one star, in that star's own color, reads as real motion
+// through 3D space instead. Sampled by distance moved, not by frame, so a
+// slow-orbiting star doesn't bunch its whole trail into one spot.
+const TRAIL_LENGTH = 40;
+const TRAIL_MIN_SPACING = 0.08;
+
+function updateTrail(p) {
+  const pos = p.sprite.position;
+  const points = p.trailPoints;
+  const last = points[points.length - 1];
+
+  if (!last || last.distanceTo(pos) > TRAIL_MIN_SPACING) {
+    points.push(pos.clone());
+    if (points.length > TRAIL_LENGTH) points.shift();
+  }
+
+  const posAttr = p.trailGeometry.attributes.position;
+  const colorAttr = p.trailGeometry.attributes.color;
+  const n = points.length;
+
+  for (let i = 0; i < n; i++) {
+    const pt = points[i];
+    posAttr.array[i * 3] = pt.x;
+    posAttr.array[i * 3 + 1] = pt.y;
+    posAttr.array[i * 3 + 2] = pt.z;
+
+    const fade = n > 1 ? i / (n - 1) : 1; // 0 at the oldest point, 1 at the star itself
+    const brightness = fade * fade * 0.7;
+    colorAttr.array[i * 3] = p.tintColor.r * brightness;
+    colorAttr.array[i * 3 + 1] = p.tintColor.g * brightness;
+    colorAttr.array[i * 3 + 2] = p.tintColor.b * brightness;
+  }
+
+  posAttr.needsUpdate = true;
+  colorAttr.needsUpdate = true;
+  p.trailGeometry.setDrawRange(0, n);
+}
 
 let maxParticipantsExpected = MAX_PARTICIPANTS_EXPECTED_DEFAULT;
 
@@ -302,12 +360,34 @@ function spawnParticle(entry) {
     // region's sky sector instead of a purely random angle.
     const angleOverride = entry.region ? regionToAngle(entry.region) : null;
 
+    // material.color above is a grayscale brightness multiplier, not the
+    // star's actual hue, the hue lives entirely in the tinted texture. Keep
+    // the real color separately for the trail and constellation lines,
+    // which need to know what color this star actually is.
+    const tintColor = new THREE.Color(entry.color || '#ffffff');
+
+    const trailGeometry = new THREE.BufferGeometry();
+    trailGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(TRAIL_LENGTH * 3), 3));
+    trailGeometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(TRAIL_LENGTH * 3), 3));
+    trailGeometry.setDrawRange(0, 0);
+    const trailMaterial = new THREE.LineBasicMaterial({
+      vertexColors: true,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    const trailLine = new THREE.Line(trailGeometry, trailMaterial);
+    scene.add(trailLine);
+
     particles.push({
       sprite,
       orbit: createOrbitState(Math.random(), angleOverride),
       baseScale,
       aspect,
       magnitudeScale,
+      tintColor,
+      trailGeometry,
+      trailPoints: [],
     });
 
     updateNebulaDrawRange();
@@ -450,6 +530,7 @@ function animate() {
     p.sprite.material.opacity = farFade * p.sprite.userData.baseOpacity;
 
     applyGravityWell(p.sprite, dt);
+    updateTrail(p);
   }
 
   updateConstellationPositions();
