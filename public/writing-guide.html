@@ -78,14 +78,62 @@
 
   .pipeline strong { color: var(--text); }
 
-  .research-block {
-    margin-bottom: 22px;
+  .figure-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    margin-top: 20px;
   }
 
-  .research-block p {
+  @media (min-width: 700px) {
+    .figure-grid { grid-template-columns: 1fr 1fr; }
+    .figure-wide { grid-column: 1 / -1; }
+  }
+
+  .figure-card {
+    background: var(--bg-alt);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px;
+  }
+
+  .figure-card svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    background: #fff;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+
+  .figure-card h4 {
+    margin: 0 0 6px;
     font-size: 14px;
+    color: var(--text);
+  }
+
+  .figure-card p.caption {
+    font-size: 13px;
+    color: var(--muted);
     margin: 0 0 10px;
   }
+
+  .figure-card p.implication {
+    font-size: 12px;
+    color: var(--accent);
+    border-left: 2px solid var(--accent);
+    padding-left: 10px;
+    margin: 0;
+  }
+
+  .sources-list {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 26px;
+    line-height: 1.9;
+  }
+
+  .sources-list a { color: var(--muted); }
 
   .print-btn {
     display: inline-block;
@@ -207,88 +255,155 @@
     </div>
 
     <h2>Research Foundation: Cheonsang Yeolcha Bunyajido (천상열차분야지도)</h2>
+    <p style="font-size:14px;">
+      Stone star chart, carved December 1395, King Taejo's first years as
+      Joseon's founding ruler. 1,467 stars, 264 constellations, 365 degree
+      marks around the rim. Five figures below, each one a finding, and what
+      it changes about the writing form.
+    </p>
 
-    <div class="research-block">
-      <h3 class="block-title">A chart rebuilt after loss</h3>
-      <p>
-        Cheonsang Yeolcha Bunyajido is a Korean star chart carved in stone
-        around 1395, in the first years of the Joseon dynasty. It was not
-        drawn from scratch. It reproduces an older chart said to date to
-        Goguryeo, whose original stone was lost, reportedly during the fall
-        of the kingdom. What survived was a paper rubbing. Joseon court
-        astronomers used that rubbing to reconstruct the chart, correcting
-        star positions for the centuries that had passed since the original
-        observations, then re-carved it in stone. A record of the sky
-        disappeared with a kingdom and was carried forward anyway, on
-        paper, until someone had the authority and the occasion to put it
-        back into permanent form. That is close to what this workshop is
-        already asking of its participants.
-      </p>
+    <div class="figure-grid">
+      <div class="figure-card">
+        <svg viewBox="0 0 260 440">
+          <rect x="20" y="20" width="180" height="400" rx="2" fill="none" stroke="#333" stroke-width="2"/>
+          <circle cx="110" cy="135" r="88" fill="none" stroke="#333" stroke-width="1.5"/>
+          <circle cx="110" cy="135" r="3" fill="#6c7bff"/>
+          <g stroke="#bbb" stroke-width="1">
+            <line x1="110" y1="55" x2="110" y2="215"/>
+            <line x1="30" y1="135" x2="190" y2="135"/>
+            <line x1="52" y1="77" x2="168" y2="193"/>
+            <line x1="52" y1="193" x2="168" y2="77"/>
+          </g>
+          <text x="110" y="245" text-anchor="middle" font-size="11" fill="#999">star map</text>
+          <g stroke="#999" stroke-width="1">
+            <line x1="35" y1="262" x2="185" y2="262"/>
+            <line x1="35" y1="276" x2="185" y2="276"/>
+            <line x1="35" y1="290" x2="185" y2="290"/>
+            <line x1="35" y1="304" x2="185" y2="304"/>
+          </g>
+          <text x="110" y="320" text-anchor="middle" font-size="11" fill="#999">star and mansion data table</text>
+          <g stroke="#999" stroke-width="1">
+            <line x1="40" y1="335" x2="40" y2="405"/>
+            <line x1="65" y1="335" x2="65" y2="405"/>
+            <line x1="90" y1="335" x2="90" y2="405"/>
+            <line x1="115" y1="335" x2="115" y2="405"/>
+            <line x1="140" y1="335" x2="140" y2="405"/>
+            <line x1="165" y1="335" x2="165" y2="405"/>
+          </g>
+          <text x="110" y="420" text-anchor="middle" font-size="11" fill="#999">preface text, vertical columns</text>
+          <line x1="20" y1="10" x2="200" y2="10" stroke="#6c7bff" stroke-width="1"/>
+          <text x="110" y="7" text-anchor="middle" font-size="10" fill="#6c7bff">122.5 cm</text>
+        </svg>
+        <h4>1. One stone, three registers</h4>
+        <p class="caption">Star map on top, a table of star and lunar-mansion data in the middle, a preface explaining why it was made at the bottom. 211 cm tall, 12 cm thick.</p>
+        <p class="implication">Design: documentation pairs each photographed chart with a short caption, map and text together, the same way.</p>
+      </div>
+
+      <div class="figure-card">
+        <svg viewBox="0 0 400 400">
+          <circle cx="200" cy="200" r="40" fill="none" stroke="#ccc"/>
+          <circle cx="200" cy="200" r="80" fill="none" stroke="#ccc"/>
+          <circle cx="200" cy="200" r="120" fill="none" stroke="#ccc"/>
+          <circle cx="200" cy="200" r="160" fill="none" stroke="#ccc"/>
+          <g stroke="#999" stroke-width="1.5">
+            <line x1="200" y1="30" x2="200" y2="18"/>
+            <line x1="285" y1="52.8" x2="291" y2="44.1"/>
+            <line x1="347.2" y1="115" x2="357.7" y2="109"/>
+            <line x1="370" y1="200" x2="382" y2="200"/>
+            <line x1="347.2" y1="285" x2="357.7" y2="291"/>
+            <line x1="285" y1="347.2" x2="291" y2="357.7"/>
+            <line x1="200" y1="370" x2="200" y2="382"/>
+            <line x1="115" y1="347.2" x2="109" y2="357.7"/>
+            <line x1="52.8" y1="285" x2="42.3" y2="291"/>
+            <line x1="30" y1="200" x2="18" y2="200"/>
+            <line x1="52.8" y1="115" x2="42.3" y2="109"/>
+            <line x1="115" y1="52.8" x2="109" y2="44.1"/>
+          </g>
+          <line x1="200" y1="40" x2="200" y2="200" stroke="#6c7bff" stroke-width="1.5"/>
+          <line x1="200" y1="200" x2="338" y2="120" stroke="#6c7bff" stroke-width="1.5"/>
+          <circle cx="200" cy="200" r="4" fill="#6c7bff"/>
+          <text x="200" y="218" text-anchor="middle" font-size="11" fill="#6c7bff">pole</text>
+          <text x="130" y="120" font-size="11" fill="#333">equal angle</text>
+          <text x="150" y="235" font-size="11" fill="#333">equal radius step</text>
+          <text x="200" y="12" text-anchor="middle" font-size="10" fill="#999">Jin, White Sheep</text>
+          <text x="345" y="110" text-anchor="start" font-size="10" fill="#999">Zhao, Golden Ox</text>
+          <text x="200" y="398" text-anchor="middle" font-size="9" fill="#999">outer rim: 12 Yeolcha sectors, Jupiter's 12-year cycle, plus 10 more</text>
+        </svg>
+        <h4>2. A real projection, not a decoration</h4>
+        <p class="caption">Polar equidistant azimuthal projection: distance from the pole is directly proportional to angular distance. The outer rim is cut into twelve Yeolcha, sectors tracking Jupiter's orbit, each historically paired with an earthly state.</p>
+        <p class="implication">Design: the personal template uses the same rule. Distance from your center is fixed and even, only the angle is yours to choose.</p>
+      </div>
+
+      <div class="figure-card">
+        <svg viewBox="0 0 400 300">
+          <circle cx="120" cy="140" r="100" fill="#ffd9ec" stroke="#333" stroke-width="1.5"/>
+          <circle cx="120" cy="140" r="65" fill="#cfe0ff" stroke="#333" stroke-width="1"/>
+          <text x="120" y="144" text-anchor="middle" font-size="10" fill="#333">~1st c.</text>
+          <text x="120" y="90" text-anchor="middle" font-size="10" fill="#333">recalibrated 1395</text>
+          <line x1="230" y1="250" x2="370" y2="250" stroke="#999" stroke-width="1"/>
+          <line x1="230" y1="246" x2="230" y2="254" stroke="#999"/>
+          <line x1="300" y1="246" x2="300" y2="254" stroke="#999"/>
+          <line x1="370" y1="246" x2="370" y2="254" stroke="#999"/>
+          <text x="230" y="270" text-anchor="middle" font-size="9" fill="#999">~18 BCE</text>
+          <text x="300" y="270" text-anchor="middle" font-size="9" fill="#999">223 CE</text>
+          <text x="370" y="270" text-anchor="middle" font-size="9" fill="#999">1395 CE</text>
+          <text x="300" y="230" text-anchor="middle" font-size="9" fill="#666">data sourced from Qianxiangli, a Chinese calendrical system</text>
+        </svg>
+        <h4>3. Two epochs, one object</h4>
+        <p class="caption">Precession dating shows the equator-band stars still match roughly first-century positions, copied forward through Chinese astronomical records, while the region near the pole was recalculated for 1395.</p>
+        <p class="implication">Design: a participant who knows an older or ancestral form of their name may note it beside the one they write, the same layering the chart itself carries.</p>
+      </div>
+
+      <div class="figure-card">
+        <svg viewBox="0 0 300 260">
+          <line x1="150" y1="90" x2="150" y2="130" stroke="#333" stroke-width="1.5"/>
+          <line x1="130" y1="110" x2="170" y2="110" stroke="#333" stroke-width="1.5"/>
+          <text x="150" y="150" text-anchor="middle" font-size="10" fill="#333">true pole</text>
+          <path d="M 150 110 A 30 30 0 0 1 178 128" fill="none" stroke="#bbb" stroke-dasharray="3 3"/>
+          <circle cx="178" cy="128" r="4" fill="#6c7bff"/>
+          <text x="188" y="120" font-size="10" fill="#6c7bff">pole star used, 1395</text>
+          <text x="188" y="134" font-size="10" fill="#6c7bff">~3 degrees off</text>
+          <text x="150" y="200" text-anchor="middle" font-size="10" fill="#999">closest approach was in 802 CE</text>
+        </svg>
+        <h4>4. Even the center had moved</h4>
+        <p class="caption">The reference pole star was nearest true north in 802, and had drifted about three degrees away by the time the stone was carved in 1395. The makers kept using it anyway.</p>
+        <p class="implication">Design: the "keep clear" center on the template is a working reference, not a claim that any point stays perfectly fixed.</p>
+      </div>
+
+      <div class="figure-card figure-wide">
+        <svg viewBox="0 0 420 220">
+          <defs>
+            <g id="miniStar">
+              <line x1="-14" y1="0" x2="14" y2="0" stroke="#333" stroke-width="1.5"/>
+              <line x1="0" y1="-14" x2="0" y2="14" stroke="#333" stroke-width="1.5"/>
+              <line x1="-10" y1="-10" x2="10" y2="10" stroke="#333" stroke-width="1.5"/>
+              <line x1="-10" y1="10" x2="10" y2="-10" stroke="#333" stroke-width="1.5"/>
+            </g>
+          </defs>
+          <use href="#miniStar" transform="translate(70,110) scale(1.6)"/>
+          <text x="70" y="165" text-anchor="middle" font-size="11" fill="#999">one name</text>
+          <line x1="120" y1="110" x2="175" y2="110" stroke="#6c7bff" stroke-width="1.5"/>
+          <path d="M 168 104 L 178 110 L 168 116" fill="none" stroke="#6c7bff" stroke-width="1.5"/>
+          <use href="#miniStar" transform="translate(320,60) scale(0.8)"/>
+          <use href="#miniStar" transform="translate(370,90) scale(0.8)"/>
+          <use href="#miniStar" transform="translate(380,140) scale(0.8)"/>
+          <use href="#miniStar" transform="translate(340,175) scale(0.8)"/>
+          <use href="#miniStar" transform="translate(280,160) scale(0.8)"/>
+          <use href="#miniStar" transform="translate(270,105) scale(0.8)"/>
+          <use href="#miniStar" transform="translate(320,120) scale(0.8)"/>
+          <text x="325" y="205" text-anchor="middle" font-size="11" fill="#999">the communal galaxy</text>
+        </svg>
+        <h4>5. One chart, many</h4>
+        <p class="caption">A single name written radially around a personal center is one small Cheonsang Yeolcha Bunyajido. Many of them, gathered, is the same structure at the scale of the room, and then the display.</p>
+      </div>
     </div>
 
-    <div class="research-block">
-      <h3 class="block-title">Field allocation: sky as claimed territory</h3>
-      <p>
-        The chart's own name contains its method. Bunya (분야, 分野) means
-        "field allocation," a system used across East Asian astronomy that
-        divides the sky into sectors and assigns each one to a region of
-        earth below it. A patch of stars is not just a patch of stars, it
-        corresponds to a place, and by extension to the people and the
-        authority tied to that place. Mapping the sky was a way of mapping,
-        and claiming, the ground. This is the same move ISEA's Charting
-        Constellations pillar asks for, reshaping geography and identity
-        through a digital, multidimensional lens, except Cheonsang Yeolcha
-        Bunyajido did it in stone six hundred years earlier. Applied to this
-        workshop: each participant's name is their own field allocation, a
-        claimed patch of sky that is theirs by the act of writing it.
-      </p>
-    </div>
-
-    <div class="research-block">
-      <h3 class="block-title">A claim of legitimacy through naming the sky</h3>
-      <p>
-        Re-carving the chart was also a political act. A new dynasty
-        demonstrating command over astronomical knowledge, the movements of
-        heaven, was a recognized way of asserting the legitimacy of its rule.
-        Naming and ordering the stars was not neutral observation, it was a
-        declaration of authority. Set against sōshi-kaimei, the colonial
-        policy that stripped Koreans of their own names, the contrast is
-        direct: one system used naming to assert power over a people, the
-        other used naming the sky to assert a people's own authority. Yoon
-        Dong-ju's poem sits on the second side of that line. So does this
-        workshop.
-      </p>
-    </div>
-
-    <div class="research-block">
-      <h3 class="block-title">Structure: one pole, many named stars</h3>
-      <p>
-        The chart is organized around a fixed point near the center,
-        corresponding to the celestial pole, with the twenty-eight lunar
-        mansions and hundreds of individually catalogued constellations
-        arranged in bands radiating outward from it. Every star that mattered
-        was named individually and placed in relation to that center, not
-        scattered at random and not lined up in a row. This is the direct
-        source for the workshop's own radial writing form: a fixed, empty
-        center, and each name given its own position, its own ray, radiating
-        outward from that shared point.
-      </p>
-    </div>
-
-    <div class="research-block">
-      <h3 class="block-title">From one chart to many</h3>
-      <p>
-        A single participant's name, written with each character or syllable
-        placed along its own ray around a personal center, is a small
-        Cheonsang Yeolcha Bunyajido of one person, their own field allocation,
-        their own claimed sky. That photograph is what TouchDesigner
-        processes individually. When every participant's chart is gathered
-        for the communal work, the structure repeats at a larger scale,
-        many personal skies contributing to one shared one, which is the
-        same relationship the original chart has to the twelve field
-        allocations, one system, many claimed territories, held together
-        without erasing any of them.
-      </p>
+    <div class="sources-list">
+      Sources:
+      <a href="https://en.wikipedia.org/wiki/Cheonsang_Yeolcha_Bunyajido" target="_blank" rel="noopener">Wikipedia, Cheonsang Yeolcha Bunyajido</a>,
+      <a href="https://ui.adsabs.harvard.edu/abs/2023JKAS...56..201A/abstract" target="_blank" rel="noopener">Journal of the Korean Astronomical Society, equinox dating study</a>,
+      <a href="https://koreascience.or.kr/article/JAKO201509956027434.page" target="_blank" rel="noopener">Journal of Astronomy and Space Sciences, manufacturing methods</a>.
+      Star and constellation counts, dimensions, and dating figures are as reported in these sources. The full list of the twelve Yeolcha field allocations was not independently confirmed here beyond the two examples shown.
     </div>
   </section>
 
