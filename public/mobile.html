@@ -3,19 +3,53 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-  <title>Add Your Name to the Galaxy</title>
+  <title>Add Your Text to the Galaxy</title>
   <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body class="mobile">
   <main>
-    <h1>Add your name to the galaxy</h1>
-    <p class="hint">Write your name or a word in your own script on plain paper, then photograph it here.</p>
+    <h1>Add your text to the galaxy</h1>
 
-    <label class="capture-box" for="photo-input">
-      <span id="capture-label">Tap to photograph</span>
-      <img id="preview" hidden alt="preview" />
-    </label>
-    <input id="photo-input" type="file" accept="image/*" capture="environment" hidden />
+    <div class="guide-box">
+      <div class="guide-box-title">Before you write</div>
+      <ul>
+        <li>Plain white or light paper, nothing patterned or lined</li>
+        <li>Dark ink or a bold marker, thick strokes read better than thin pencil</li>
+        <li>Even light on the page, avoid heavy shadows across the text</li>
+      </ul>
+      <a href="/writing-guide.html">Read the full Writing Guide first &rarr;</a>
+    </div>
+
+    <div id="preCapture">
+      <p class="hint">Once your text is written, add a photo of it here.</p>
+      <div class="capture-choices">
+        <button id="cameraBtn" class="choice-btn" type="button">
+          <span class="choice-icon">&#128247;</span>
+          Take a Photo
+        </button>
+        <button id="uploadBtn" class="choice-btn" type="button">
+          <span class="choice-icon">&#8593;</span>
+          Upload a Photo
+        </button>
+      </div>
+    </div>
+
+    <div id="cameraView" hidden>
+      <video id="cameraStream" playsinline autoplay muted></video>
+      <div class="camera-controls">
+        <button id="captureBtn" class="btn-capture" type="button">Capture</button>
+        <button id="cancelCameraBtn" class="btn-text" type="button">Cancel</button>
+      </div>
+    </div>
+
+    <div id="previewView" hidden>
+      <img id="preview" alt="preview" />
+      <button id="retakeBtn" class="btn-text" type="button">Choose a different photo</button>
+    </div>
+
+    <canvas id="captureCanvas" hidden></canvas>
+    <input id="cameraInput" type="file" accept="image/*" capture="environment" hidden />
+    <input id="uploadInput" type="file" accept="image/*" hidden />
 
     <label class="field">
       Color

@@ -54,23 +54,109 @@ body.mobile h1 {
   margin-top: 0;
 }
 
-.capture-box {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 220px;
-  border: 2px dashed #3a3f6b;
+.guide-box {
+  margin: 16px 0 20px;
+  padding: 16px 18px;
+  border: 1px solid #23264a;
   border-radius: 12px;
-  margin: 16px 0;
-  cursor: pointer;
-  overflow: hidden;
   background: #0a0c1e;
 }
 
-.capture-box img {
+.guide-box-title {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8fd6ff;
+  margin-bottom: 10px;
+}
+
+.guide-box ul {
+  margin: 0 0 12px;
+  padding-left: 18px;
+  color: #d3d6f2;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.guide-box a {
+  color: #8fd6ff;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.guide-box a:hover {
+  text-decoration: underline;
+}
+
+.capture-choices {
+  display: flex;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.choice-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 22px 12px;
+  border: 2px dashed #3a3f6b;
+  border-radius: 12px;
+  background: #0a0c1e;
+  color: #eef0ff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.choice-btn:hover {
+  border-color: #6c7bff;
+}
+
+.choice-icon {
+  font-size: 26px;
+}
+
+#cameraView video {
   width: 100%;
-  height: 100%;
-  object-fit: contain;
+  border-radius: 12px;
+  background: #000;
+}
+
+.camera-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 14px 0;
+}
+
+.btn-capture {
+  padding: 12px 28px;
+  border: none;
+  border-radius: 999px;
+  background: #6c7bff;
+  color: #04051a;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-text {
+  background: none;
+  border: none;
+  color: #9aa1c9;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+#previewView img {
+  width: 100%;
+  border-radius: 12px;
+  margin: 16px 0 10px;
+  background: #0a0c1e;
 }
 
 .field {
