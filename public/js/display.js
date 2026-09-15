@@ -113,6 +113,53 @@ const nebula = new THREE.Points(nebulaGeometry, nebulaMaterial);
 nebula.geometry.setDrawRange(0, operatorNebulaBaseline);
 scene.add(nebula);
 
+// Milky Way band: the scroll photo in the writing guide's research showed
+// the actual chart draws the Milky Way as a curved sweep, not uniform dust.
+// This gives the whole scene one unifying gesture instead of a flat scatter,
+// distinct from the nebula's random cloud, points are distributed along a
+// gentle S-curve with width that tapers at both ends.
+const MILKY_WAY_COUNT = 900;
+const milkyWayGeometry = new THREE.BufferGeometry();
+const milkyWayPositions = new Float32Array(MILKY_WAY_COUNT * 3);
+const milkyWayColors = new Float32Array(MILKY_WAY_COUNT * 3);
+const milkyWayPalette = [
+  new THREE.Color(0xbfd0ff),
+  new THREE.Color(0xe8d8ff),
+  new THREE.Color(0xfff0e0),
+];
+for (let i = 0; i < MILKY_WAY_COUNT; i++) {
+  const t = Math.random(); // 0..1 along the band
+  const bandWidth = 3.5 * Math.sin(t * Math.PI) + 0.4; // tapers at both ends
+  const curveX = (t - 0.5) * 46;
+  const curveZ = Math.sin(t * Math.PI * 1.4 + 0.6) * 14;
+  const curveY = (t - 0.5) * 9;
+
+  const jitter = (Math.random() - 0.5) * bandWidth;
+  const normalAngle = t * Math.PI * 1.4 + 0.6 + Math.PI / 2;
+
+  milkyWayPositions[i * 3] = curveX + Math.cos(normalAngle) * jitter;
+  milkyWayPositions[i * 3 + 1] = curveY + (Math.random() - 0.5) * bandWidth * 0.6;
+  milkyWayPositions[i * 3 + 2] = curveZ + Math.sin(normalAngle) * jitter;
+
+  const c = milkyWayPalette[Math.floor(Math.random() * milkyWayPalette.length)];
+  milkyWayColors[i * 3] = c.r;
+  milkyWayColors[i * 3 + 1] = c.g;
+  milkyWayColors[i * 3 + 2] = c.b;
+}
+milkyWayGeometry.setAttribute('position', new THREE.BufferAttribute(milkyWayPositions, 3));
+milkyWayGeometry.setAttribute('color', new THREE.BufferAttribute(milkyWayColors, 3));
+const milkyWayMaterial = new THREE.PointsMaterial({
+  map: createDotTexture(),
+  size: 0.16,
+  vertexColors: true,
+  transparent: true,
+  opacity: 0.4,
+  blending: THREE.AdditiveBlending,
+  depthWrite: false,
+});
+const milkyWay = new THREE.Points(milkyWayGeometry, milkyWayMaterial);
+scene.add(milkyWay);
+
 // Central flare: a bright core at the pole every orbit converges toward
 // but never reaches, the fixed point the Three Enclosures research figure
 // describes, made visible instead of left as an empty "keep clear" gap.
@@ -148,6 +195,69 @@ scene.add(flareSprite);
 
 const textureLoader = new THREE.TextureLoader();
 const particles = []; // { sprite, orbit, baseScale, intensity }
+
+// Constellation lines: "Names are like stars. They can be connected with
+// others in cultural constellations." Nothing in the scene actually proved
+// that relationship before, stars only shared the same rotating space. Each
+// star connects to its nearest neighbor, regrouped periodically rather than
+// every frame so the connections read as stable constellations that slowly
+// reshuffle, not a flickering web.
+let constellationPairs = []; // [[indexA, indexB], ...]
+const constellationGeometry = new THREE.BufferGeometry();
+const constellationMaterial = new THREE.LineBasicMaterial({
+  color: 0x8fa2ff,
+  transparent: true,
+  opacity: 0.25,
+  blending: THREE.AdditiveBlending,
+  depthWrite: false,
+});
+const constellationLines = new THREE.LineSegments(constellationGeometry, constellationMaterial);
+scene.add(constellationLines);
+
+function recomputeConstellation() {
+  constellationPairs = [];
+  const used = new Set();
+
+  for (let i = 0; i < particles.length; i++) {
+    let nearestIdx = -1;
+    let nearestDist = Infinity;
+    for (let j = 0; j < particles.length; j++) {
+      if (i === j) continue;
+      const d = particles[i].sprite.position.distanceTo(particles[j].sprite.position);
+      if (d < nearestDist) {
+        nearestDist = d;
+        nearestIdx = j;
+      }
+    }
+    if (nearestIdx === -1) continue;
+    const key = i < nearestIdx ? `${i}-${nearestIdx}` : `${nearestIdx}-${i}`;
+    if (used.has(key)) continue;
+    used.add(key);
+    constellationPairs.push([i, nearestIdx]);
+  }
+
+  const positions = new Float32Array(constellationPairs.length * 6);
+  constellationGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+}
+
+function updateConstellationPositions() {
+  const posAttr = constellationGeometry.attributes.position;
+  if (!posAttr || constellationPairs.length === 0) return;
+
+  constellationPairs.forEach(([a, b], i) => {
+    const pa = particles[a].sprite.position;
+    const pb = particles[b].sprite.position;
+    posAttr.array[i * 6] = pa.x;
+    posAttr.array[i * 6 + 1] = pa.y;
+    posAttr.array[i * 6 + 2] = pa.z;
+    posAttr.array[i * 6 + 3] = pb.x;
+    posAttr.array[i * 6 + 4] = pb.y;
+    posAttr.array[i * 6 + 5] = pb.z;
+  });
+  posAttr.needsUpdate = true;
+}
+
+setInterval(recomputeConstellation, 4000);
 
 let maxParticipantsExpected = MAX_PARTICIPANTS_EXPECTED_DEFAULT;
 
@@ -201,6 +311,7 @@ function spawnParticle(entry) {
     });
 
     updateNebulaDrawRange();
+    recomputeConstellation();
   });
 }
 
@@ -340,6 +451,8 @@ function animate() {
 
     applyGravityWell(p.sprite, dt);
   }
+
+  updateConstellationPositions();
 
   flareSprite.scale.setScalar(3.5 + density * 2.5);
   flareMaterial.opacity = 0.6 + density * 0.4;
