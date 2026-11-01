@@ -7,6 +7,7 @@ const express = require('express');
 const multer = require('multer');
 const http = require('http');
 const { Server } = require('socket.io');
+const { WebSocketServer, WebSocket } = require('ws');
 const { processHandwriting, hexToRgb } = require('./imageProcessor');
 const persistence = require('./persistence');
 
@@ -20,6 +21,62 @@ fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
+
+// Plain WebSocket feed for TouchDesigner's WebSocket DAT (Socket.IO's own
+// protocol needs a handshake TD doesn't speak). Read-only: sends JSON text
+// messages, ignores anything it receives.
+const TD_WS_PATH = '/td';
+const tdWss = new WebSocketServer({ noServer: true });
+
+server.on('upgrade', (req, socket, head) => {
+  const { pathname } = new URL(req.url, 'http://localhost');
+  if (pathname !== TD_WS_PATH) return; // leave /socket.io/ to Socket.IO
+  tdWss.handleUpgrade(req, socket, head, (ws) => tdWss.emit('connection', ws, req));
+});
+
+// TD needs full image URLs; local-dev uploads are relative paths.
+function absoluteEntry(entry, origin) {
+  return entry.url.startsWith('/') ? { ...entry, url: origin + entry.url } : entry;
+}
+
+function requestOrigin(req) {
+  const proto = (req.headers['x-forwarded-proto'] || 'http').split(',')[0].trim();
+  return `${proto}://${req.headers.host}`;
+}
+
+tdWss.on('connection', (ws, req) => {
+  ws.origin = requestOrigin(req);
+  ws.isAlive = true;
+  ws.on('pong', () => { ws.isAlive = true; });
+  ws.send(JSON.stringify({
+    type: 'init',
+    entries: entries.map((e) => absoluteEntry(e, ws.origin)),
+    count: entries.length,
+    maxParticipantsExpected: MAX_PARTICIPANTS_EXPECTED,
+  }));
+});
+
+function broadcastToTD(entry) {
+  for (const ws of tdWss.clients) {
+    if (ws.readyState !== WebSocket.OPEN) continue;
+    ws.send(JSON.stringify({
+      type: 'newEntry',
+      entry: absoluteEntry(entry, ws.origin),
+      count: entries.length,
+      maxParticipantsExpected: MAX_PARTICIPANTS_EXPECTED,
+    }));
+  }
+}
+
+// Ping every 25s so Render's proxy doesn't drop an idle connection,
+// and clean up clients that stopped answering.
+setInterval(() => {
+  for (const ws of tdWss.clients) {
+    if (!ws.isAlive) { ws.terminate(); continue; }
+    ws.isAlive = false;
+    ws.ping();
+  }
+}, 25000);
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -89,6 +146,7 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
 
     io.emit('newEntry', entry);
     io.emit('count', { count: entries.length, maxParticipantsExpected: MAX_PARTICIPANTS_EXPECTED });
+    broadcastToTD(entry);
 
     res.json({ ok: true, entry });
   } catch (err) {
@@ -117,6 +175,7 @@ async function start() {
     console.log(`Cultural Text Galaxy server running:`);
     console.log(`  Display (venue screen): http://localhost:${PORT}/display.html`);
     console.log(`  Mobile client (share via QR): http://<your-lan-ip>:${PORT}/mobile.html`);
+    console.log(`  TouchDesigner WebSocket: ws://localhost:${PORT}${TD_WS_PATH}`);
     console.log(`  Persistence: ${persistence.isConfigured ? 'Supabase' : 'in-memory only (local dev)'}`);
   });
 }

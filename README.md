@@ -96,6 +96,22 @@ about 30s to wake on the next request. For a live workshop, either keep a
 tab open against the URL beforehand to keep it warm, or upgrade to Render's
 paid "always on" tier for that session.
 
+## TouchDesigner feed
+
+A plain WebSocket at `/td` streams entries to TouchDesigner's WebSocket DAT
+(no Socket.IO handshake needed):
+
+    wss://cultural-text-galaxy.onrender.com/td
+
+It sends JSON text messages and ignores anything it receives:
+
+- `{"type":"init","entries":[...],"count":N,"maxParticipantsExpected":20}` once on connect
+- `{"type":"newEntry","entry":{...},"count":N,"maxParticipantsExpected":20}` per submission
+
+Each entry has `id`, `url` (always absolute, a transparent tinted PNG),
+`color`, `transparency`, `intensity`, `region`, `place`, `createdAt`. The
+server pings every 25s to keep Render's proxy from dropping idle connections.
+
 ## How it works
 
 1. Participant photographs handwriting on the mobile page and picks color,
