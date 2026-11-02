@@ -34,7 +34,8 @@ if (isConfigured) {
 function disable(err) {
   isConfigured = false;
   client = null;
-  lastError = (err && err.message) || String(err);
+  const cause = err && err.cause ? ` (${err.cause.code || err.cause.message})` : '';
+  lastError = ((err && err.message) || String(err)) + cause;
   console.error(`Supabase disabled, falling back to in-memory: ${lastError}`);
 }
 
@@ -100,6 +101,10 @@ async function deleteAllEntries() {
 module.exports = {
   get isConfigured() { return isConfigured; },
   get lastError() { return lastError; },
+  // The project URL is not secret (browsers see it); the key is never exposed.
+  get host() {
+    try { return new URL((SUPABASE_URL || '').trim()).host; } catch { return SUPABASE_URL ? 'unparseable' : null; }
+  },
   disable,
   uploadImage,
   insertEntry,

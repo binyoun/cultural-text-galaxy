@@ -128,6 +128,7 @@ app.get('/api/health', (req, res) => {
     persistence: persistence.isConfigured ? 'supabase' : 'memory',
     supabaseEnvSet: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY),
     supabaseError: persistence.lastError,
+    supabaseHost: persistence.host,
     count: entries.length,
     maxEntries: MAX_ENTRIES,
   });
