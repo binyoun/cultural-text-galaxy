@@ -1,4 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
+const WebSocket = require('ws');
 
 // Optional persistence layer. Local dev and testing stay exactly as before,
 // in-memory only, when these env vars aren't set. On Render (or anywhere
@@ -18,7 +19,11 @@ let lastError = null;
 let client = null;
 if (isConfigured) {
   try {
-    client = createClient(SUPABASE_URL.trim(), SUPABASE_SERVICE_KEY.trim());
+    // Node below 22 has no native WebSocket, which supabase-js requires, so
+    // hand it the ws package the server already uses.
+    client = createClient(SUPABASE_URL.trim(), SUPABASE_SERVICE_KEY.trim(), {
+      realtime: { transport: WebSocket },
+    });
   } catch (err) {
     disable(err);
   }
