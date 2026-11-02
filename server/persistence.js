@@ -58,4 +58,19 @@ async function fetchAllEntries() {
   }));
 }
 
-module.exports = { isConfigured, uploadImage, insertEntry, fetchAllEntries };
+async function deleteAllEntries() {
+  const { error } = await client.from(TABLE).delete().not('id', 'is', null);
+  if (error) throw error;
+
+  // Storage list is paged; keep removing until the bucket is empty.
+  for (;;) {
+    const { data: files, error: listError } = await client.storage.from(BUCKET).list('', { limit: 1000 });
+    if (listError) throw listError;
+    const names = files.filter((f) => f.id).map((f) => f.name);
+    if (names.length === 0) break;
+    const { error: removeError } = await client.storage.from(BUCKET).remove(names);
+    if (removeError) throw removeError;
+  }
+}
+
+module.exports = { isConfigured, uploadImage, insertEntry, fetchAllEntries, deleteAllEntries };

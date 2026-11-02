@@ -14,6 +14,10 @@ const persistence = require('./persistence');
 const PORT = process.env.PORT || 3000;
 const UPLOAD_DIR = path.join(__dirname, '..', 'uploads');
 const MAX_PARTICIPANTS_EXPECTED = 20; // used to normalize the density factor
+// Hard cap matching the 50 fixed slots in the TouchDesigner galaxy.
+const MAX_ENTRIES = parseInt(process.env.MAX_ENTRIES, 10) || 50;
+// Protects POST /api/reset. Unset = reset disabled.
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN || '';
 const VALID_REGIONS = new Set(['asia', 'middle-east', 'africa', 'europe', 'americas', 'oceania']);
 
 fs.mkdirSync(UPLOAD_DIR, { recursive: true });
@@ -53,6 +57,7 @@ tdWss.on('connection', (ws, req) => {
     entries: entries.map((e) => absoluteEntry(e, ws.origin)),
     count: entries.length,
     maxParticipantsExpected: MAX_PARTICIPANTS_EXPECTED,
+    maxEntries: MAX_ENTRIES,
   }));
 });
 
@@ -64,7 +69,15 @@ function broadcastToTD(entry) {
       entry: absoluteEntry(entry, ws.origin),
       count: entries.length,
       maxParticipantsExpected: MAX_PARTICIPANTS_EXPECTED,
+      maxEntries: MAX_ENTRIES,
     }));
+  }
+}
+
+function broadcastResetToTD() {
+  const message = JSON.stringify({ type: 'reset', count: 0, maxEntries: MAX_ENTRIES });
+  for (const ws of tdWss.clients) {
+    if (ws.readyState === WebSocket.OPEN) ws.send(message);
   }
 }
 
@@ -106,6 +119,9 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
     if (!req.file) {
       return res.status(400).json({ error: 'image file is required' });
     }
+    if (entries.length >= MAX_ENTRIES) {
+      return res.status(409).json({ error: 'galaxy is full' });
+    }
 
     const color = hexToRgb(req.body.color || '#ffffff');
     const transparency = clamp(parseFloat(req.body.transparency), 0.1, 1.0, 1.0);
@@ -115,6 +131,12 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
     const place = (req.body.place || '').toString().trim().slice(0, 60);
 
     const pngBuffer = await processHandwriting(req.file.buffer, color);
+
+    // Re-check: other uploads may have filled the last slots while this
+    // image was processing.
+    if (entries.length >= MAX_ENTRIES) {
+      return res.status(409).json({ error: 'galaxy is full' });
+    }
 
     const id = crypto.randomUUID();
     const filename = `${id}.png`;
@@ -154,6 +176,41 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
     res.status(500).json({ error: 'processing failed' });
   }
 });
+
+// Clears every entry (memory, Supabase or local uploads) so the galaxy
+// starts empty, e.g. right before the live session to drop test uploads.
+app.post('/api/reset', async (req, res) => {
+  const token = req.get('x-admin-token') || '';
+  if (!ADMIN_TOKEN || !safeEqual(token, ADMIN_TOKEN)) {
+    return res.status(403).json({ error: 'forbidden' });
+  }
+  try {
+    if (persistence.isConfigured) {
+      await persistence.deleteAllEntries();
+    } else {
+      for (const f of fs.readdirSync(UPLOAD_DIR)) {
+        if (f.endsWith('.png')) fs.unlinkSync(path.join(UPLOAD_DIR, f));
+      }
+    }
+    const removed = entries.length;
+    entries.length = 0;
+
+    io.emit('reset');
+    io.emit('count', { count: 0, maxParticipantsExpected: MAX_PARTICIPANTS_EXPECTED });
+    broadcastResetToTD();
+
+    res.json({ ok: true, removed });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'reset failed' });
+  }
+});
+
+function safeEqual(a, b) {
+  const ab = Buffer.from(a);
+  const bb = Buffer.from(b);
+  return ab.length === bb.length && crypto.timingSafeEqual(ab, bb);
+}
 
 function clamp(value, min, max, fallback) {
   if (Number.isNaN(value)) return fallback;

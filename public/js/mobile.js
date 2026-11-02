@@ -149,6 +149,10 @@ submitBtn.addEventListener('click', async () => {
 
   try {
     const res = await fetch('/api/submit', { method: 'POST', body: formData });
+    if (res.status === 409) {
+      statusEl.textContent = 'The galaxy is full. Please send your photo to the organisers.';
+      return;
+    }
     if (!res.ok) throw new Error('upload failed');
 
     statusEl.textContent = 'Your text is now in the galaxy.';

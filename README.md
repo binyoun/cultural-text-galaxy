@@ -108,9 +108,29 @@ It sends JSON text messages and ignores anything it receives:
 - `{"type":"init","entries":[...],"count":N,"maxParticipantsExpected":20}` once on connect
 - `{"type":"newEntry","entry":{...},"count":N,"maxParticipantsExpected":20}` per submission
 
+- `{"type":"reset","count":0}` when the galaxy is cleared (empty every slot)
+
+Every message also carries `maxEntries` (default 50). Entries are only ever
+appended, so on `newEntry` the new star belongs in slot `count`.
+
 Each entry has `id`, `url` (always absolute, a transparent tinted PNG),
 `color`, `transparency`, `intensity`, `region`, `place`, `createdAt`. The
 server pings every 25s to keep Render's proxy from dropping idle connections.
+
+## Cap and reset
+
+Uploads stop at `MAX_ENTRIES` (default 50, matching the TouchDesigner
+slots); further submissions get HTTP 409 and the upload page asks the
+participant to send their photo to the organisers instead.
+
+To clear all entries (memory, Supabase rows and stored images), e.g. to drop
+test uploads right before the session, set `ADMIN_TOKEN` in the Render
+environment and run:
+
+    curl -X POST -H "x-admin-token: <ADMIN_TOKEN>" https://cultural-text-galaxy.onrender.com/api/reset
+
+Open display pages reload themselves and TouchDesigner receives a `reset`
+message. With `ADMIN_TOKEN` unset, reset is disabled.
 
 ## How it works
 
