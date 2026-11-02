@@ -129,6 +129,8 @@ app.get('/api/health', (req, res) => {
     supabaseEnvSet: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY),
     supabaseError: persistence.lastError,
     supabaseHost: persistence.host,
+    adminTokenSet: Boolean(ADMIN_TOKEN),
+    adminTokenLength: ADMIN_TOKEN.length,
     count: entries.length,
     maxEntries: MAX_ENTRIES,
   });
