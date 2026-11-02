@@ -106,6 +106,18 @@ const upload = multer({
 // exactly 1 row = 1 full name image instance slot.
 const entries = [];
 
+// Short links for the workshop slides and QR codes.
+const SHORT_LINKS = {
+  '/up': '/mobile.html',
+  '/galaxy': '/display.html',
+  '/guide': '/writing-guide.html#instructions',
+  '/template': '/writing-guide.html#template',
+  '/starter': 'https://drive.google.com/drive/folders/1udeo0PnWwCmQ9vR3ww2siDUyJm2Hk_--?usp=sharing',
+};
+for (const [from, to] of Object.entries(SHORT_LINKS)) {
+  app.get(from, (req, res) => res.redirect(302, to));
+}
+
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use('/uploads', express.static(UPLOAD_DIR));
 app.use('/vendor/three', express.static(path.join(__dirname, '..', 'node_modules', 'three')));
