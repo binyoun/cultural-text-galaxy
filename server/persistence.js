@@ -10,9 +10,28 @@ const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const BUCKET = 'handwriting-uploads';
 const TABLE = 'entries';
 
-const isConfigured = Boolean(SUPABASE_URL && SUPABASE_SERVICE_KEY);
+let isConfigured = Boolean(SUPABASE_URL && SUPABASE_SERVICE_KEY);
+// Why Supabase was switched off at runtime, shown on /api/health. Never
+// includes the key itself.
+let lastError = null;
 
-const client = isConfigured ? createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY) : null;
+let client = null;
+if (isConfigured) {
+  try {
+    client = createClient(SUPABASE_URL.trim(), SUPABASE_SERVICE_KEY.trim());
+  } catch (err) {
+    disable(err);
+  }
+}
+
+// Fall back to in-memory instead of crashing, so a bad setting on Render
+// can't take the whole site down mid-workshop.
+function disable(err) {
+  isConfigured = false;
+  client = null;
+  lastError = (err && err.message) || String(err);
+  console.error(`Supabase disabled, falling back to in-memory: ${lastError}`);
+}
 
 async function uploadImage(filename, buffer) {
   const { error } = await client.storage.from(BUCKET).upload(filename, buffer, {
@@ -73,4 +92,12 @@ async function deleteAllEntries() {
   }
 }
 
-module.exports = { isConfigured, uploadImage, insertEntry, fetchAllEntries, deleteAllEntries };
+module.exports = {
+  get isConfigured() { return isConfigured; },
+  get lastError() { return lastError; },
+  disable,
+  uploadImage,
+  insertEntry,
+  fetchAllEntries,
+  deleteAllEntries,
+};

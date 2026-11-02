@@ -122,6 +122,17 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use('/uploads', express.static(UPLOAD_DIR));
 app.use('/vendor/three', express.static(path.join(__dirname, '..', 'node_modules', 'three')));
 
+app.get('/api/health', (req, res) => {
+  res.json({
+    ok: true,
+    persistence: persistence.isConfigured ? 'supabase' : 'memory',
+    supabaseEnvSet: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY),
+    supabaseError: persistence.lastError,
+    count: entries.length,
+    maxEntries: MAX_ENTRIES,
+  });
+});
+
 app.get('/api/entries', (req, res) => {
   res.json({ entries, count: entries.length, maxParticipantsExpected: MAX_PARTICIPANTS_EXPECTED });
 });
@@ -235,9 +246,13 @@ io.on('connection', (socket) => {
 
 async function start() {
   if (persistence.isConfigured) {
-    const existing = await persistence.fetchAllEntries();
-    entries.push(...existing);
-    console.log(`Rehydrated ${existing.length} entries from Supabase.`);
+    try {
+      const existing = await persistence.fetchAllEntries();
+      entries.push(...existing);
+      console.log(`Rehydrated ${existing.length} entries from Supabase.`);
+    } catch (err) {
+      persistence.disable(err);
+    }
   }
 
   server.listen(PORT, () => {
