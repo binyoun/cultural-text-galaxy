@@ -19,6 +19,9 @@ async function processHandwriting(inputBuffer, color, maxSize = 768) {
 
   const { data, info } = await sharp(inputBuffer)
     .rotate() // respect EXIF orientation
+    // Pre-cut PNGs (ink on transparency) hide black RGB under alpha 0, which
+    // greyscale() would read as ink. Treat transparency as white paper.
+    .flatten({ background: '#ffffff' })
     .resize({ width: maxSize, height: maxSize, fit: 'inside', withoutEnlargement: true })
     .greyscale()
     .normalize() // stretch contrast so uneven lighting doesn't wash out the ink
