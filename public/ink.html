@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lift Your Ink</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="mobile">
+  <canvas id="starfield"></canvas>
+  <nav class="site-nav">
+    <div class="links" id="navLinks">
+      <svg id="navConstellation"><polyline id="navPolyline" points=""></polyline></svg>
+      <a href="/"><span class="star-dot"></span>Home</a>
+      <a href="/#about"><span class="star-dot"></span>About</a>
+      <a href="/#concept"><span class="star-dot"></span>Concept</a>
+      <a href="/#isea"><span class="star-dot"></span>ISEA 2026</a>
+      <a href="/#organizers"><span class="star-dot"></span>Organizers</a>
+      <a href="/writing-guide.html"><span class="star-dot"></span>Writing Guide</a>
+      <a href="/ink.html" class="current"><span class="star-dot"></span>Lift Your Ink</a>
+      <a href="/mobile.html"><span class="star-dot"></span>Add Your Text</a>
+      <a href="/display.html"><span class="star-dot"></span>View the Galaxy</a>
+    </div>
+  </nav>
+  <main>
+    <h1>Lift your ink from the paper</h1>
+    <p class="hint">Removes the paper from a photo of your handwriting and keeps only the ink, ready for TouchDesigner. Your photo stays on your device; nothing is sent anywhere.</p>
+
+    <div id="inkPick">
+      <div class="capture-choices">
+        <button id="inkCameraBtn" class="choice-btn" type="button">
+          <span class="choice-icon">&#9673;</span>
+          Take a Photo
+        </button>
+        <button id="inkUploadBtn" class="choice-btn" type="button">
+          <span class="choice-icon">&#8593;</span>
+          Choose a Photo
+        </button>
+      </div>
+    </div>
+
+    <input id="inkCameraInput" type="file" accept="image/*" capture="environment" hidden />
+    <input id="inkUploadInput" type="file" accept="image/*" hidden />
+
+    <div id="inkResult" hidden>
+      <div class="ink-stage">
+        <canvas id="inkCanvas" aria-label="Your ink with the paper removed"></canvas>
+      </div>
+      <button id="inkRetakeBtn" class="btn-text" type="button">Choose a different photo</button>
+
+      <label class="field">
+        Ink strength
+        <input id="inkStrength" type="range" min="-40" max="40" step="1" value="0" />
+        <span class="ink-scale"><span>less ink</span><span>more ink</span></span>
+      </label>
+
+      <div class="field">
+        <div class="field-label">Ink colour</div>
+        <div class="ink-colours" id="inkColours">
+          <button type="button" class="region-btn selected" data-colour="#000000">Black</button>
+          <button type="button" class="region-btn" data-colour="#ffffff">White</button>
+          <button type="button" class="region-btn" data-colour="custom">Colour</button>
+        </div>
+        <input id="inkCustomColour" type="color" value="#e8c99d" hidden />
+      </div>
+
+      <label class="ink-check">
+        <input id="inkTrim" type="checkbox" checked />
+        Trim the empty paper around the writing
+      </label>
+
+      <button id="submit-btn" type="button">Save my ink</button>
+    </div>
+
+    <p id="status"></p>
+
+    <div class="guide-box">
+      <div class="guide-box-title">For the best result</div>
+      <ul>
+        <li>Plain light paper, dark pen or marker</li>
+        <li>Photograph from straight above, in even light</li>
+        <li>If parts of your writing disappear, slide Ink strength towards "more ink"</li>
+        <li>If shadows or paper texture show, slide towards "less ink"</li>
+      </ul>
+    </div>
+  </main>
+  <script src="/js/ink.js"></script>
+  <script src="/js/starfield.js"></script>
+  <script src="/js/nav.js"></script>
+  <script>wireConstellations([['navLinks', 'navPolyline']]);</script>
+</body>
+</html>

@@ -116,6 +116,7 @@ const SHORT_LINKS = {
   '/galaxy': '/display.html',
   '/guide': '/writing-guide.html#instructions',
   '/template': '/writing-guide.html#template',
+  '/ink': '/ink.html',
   '/starter': 'https://drive.google.com/drive/folders/1udeo0PnWwCmQ9vR3ww2siDUyJm2Hk_--?usp=sharing',
 };
 for (const [from, to] of Object.entries(SHORT_LINKS)) {

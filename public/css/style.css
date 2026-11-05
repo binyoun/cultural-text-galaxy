@@ -427,3 +427,58 @@ body.mobile h1 {
   font-size: 13px;
   color: #7a80ad;
 }
+
+/* Lift Your Ink (ink.html) */
+.ink-stage {
+  margin: 16px 0 10px;
+  padding: 12px;
+  border-radius: 12px;
+  background-color: #d9dbe8;
+  background-image:
+    linear-gradient(45deg, #b8bbd0 25%, transparent 25%),
+    linear-gradient(-45deg, #b8bbd0 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #b8bbd0 75%),
+    linear-gradient(-45deg, transparent 75%, #b8bbd0 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+}
+
+.ink-stage canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.ink-scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 11px;
+  color: #7a80ad;
+}
+
+.ink-colours {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+#inkCustomColour {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+}
+
+#inkCustomColour[hidden] {
+  display: none;
+}
+
+.ink-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 16px;
+  font-size: 13px;
+  color: #b9bfe6;
+}

@@ -53,6 +53,7 @@ Either of these works.
 |---|---|
 | Participant hub (all links) | https://binyoun.github.io/counting-cultural-star |
 | Send your star | https://cultural-text-galaxy.onrender.com/up |
+| Lift your ink (removes paper, saves PNG; runs on the device, sends nothing) | https://cultural-text-galaxy.onrender.com/ink |
 | Shared galaxy (browser) | https://cultural-text-galaxy.onrender.com/galaxy |
 | Server status | https://cultural-text-galaxy.onrender.com/api/health |
 | List of stars (JSON) | https://cultural-text-galaxy.onrender.com/api/entries |
