@@ -66,6 +66,6 @@ curl -X POST -H "x-admin-token: $(cat ~/.config/cultural-text-galaxy/admin_token
 
 ## Known limits
 
-- HEIC files uploaded from a computer fail on the server (the image library cannot decode them). Photos sent from a phone through /up arrive as JPEG and work.
-- Uploads over 8 MB are refused.
+- iPhone HEIC files work from a phone or a computer: the server converts them to JPEG first (since 5 Nov, commit 7ab56f2).
+- Uploads over 15 MB are refused with a clear message asking for a screenshot instead. Unreadable files get "Please send a JPG or PNG photo".
 - The free Render plan sleeps when idle; the first visit can take about a minute.
