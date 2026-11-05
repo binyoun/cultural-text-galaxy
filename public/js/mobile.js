@@ -50,6 +50,11 @@ function showPreCapture() {
 
 function showPreview(file) {
   selectedFile = file;
+  // Some browsers (e.g. Chrome with .heic) can't show a preview; the photo
+  // still sends fine, so say so rather than showing a broken image.
+  preview.onerror = () => {
+    preview.alt = 'Preview not available for this photo, but it can still be sent.';
+  };
   preview.src = URL.createObjectURL(file);
   preCapture.hidden = true;
   cameraView.hidden = true;
@@ -151,6 +156,16 @@ submitBtn.addEventListener('click', async () => {
     const res = await fetch('/api/submit', { method: 'POST', body: formData });
     if (res.status === 409) {
       statusEl.textContent = 'The galaxy is full. Please send your photo to the organisers.';
+      return;
+    }
+    if (res.status === 413) {
+      statusEl.textContent = 'This photo is too large (over 15 MB). Please take a screenshot of it and send that instead.';
+      submitBtn.disabled = false;
+      return;
+    }
+    if (res.status === 415 || res.status === 422) {
+      statusEl.textContent = "We couldn't read this photo. Please send a JPG or PNG photo instead.";
+      submitBtn.disabled = false;
       return;
     }
     if (!res.ok) throw new Error('upload failed');

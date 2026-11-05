@@ -1,4 +1,21 @@
 const sharp = require('sharp');
+const heicConvert = require('heic-convert');
+
+/**
+ * sharp's prebuilt libvips reads AVIF but not HEVC-compressed HEIF, which is
+ * what iPhones save as .heic. Those are converted to JPEG here; everything
+ * else is passed through untouched. Throws if the image can't be read.
+ *
+ * @param {Buffer} inputBuffer raw uploaded image
+ * @returns {Promise<Buffer>} a buffer sharp can decode
+ */
+async function toDecodableImage(inputBuffer) {
+  const meta = await sharp(inputBuffer).metadata();
+  if (meta.format === 'heif' && meta.compression !== 'av1') {
+    return Buffer.from(await heicConvert({ buffer: inputBuffer, format: 'JPEG', quality: 0.92 }));
+  }
+  return inputBuffer;
+}
 
 /**
  * Threshold/Crop TOP equivalent.
@@ -131,4 +148,4 @@ function hexToRgb(hex) {
   };
 }
 
-module.exports = { processHandwriting, hexToRgb };
+module.exports = { processHandwriting, hexToRgb, toDecodableImage };

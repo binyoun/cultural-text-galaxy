@@ -8,7 +8,7 @@ const multer = require('multer');
 const http = require('http');
 const { Server } = require('socket.io');
 const { WebSocketServer, WebSocket } = require('ws');
-const { processHandwriting, hexToRgb } = require('./imageProcessor');
+const { processHandwriting, hexToRgb, toDecodableImage } = require('./imageProcessor');
 const persistence = require('./persistence');
 
 const PORT = process.env.PORT || 3000;
@@ -91,11 +91,15 @@ setInterval(() => {
   }
 }, 25000);
 
+const MAX_UPLOAD_MB = 15;
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 8 * 1024 * 1024 },
+  limits: { fileSize: MAX_UPLOAD_MB * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    if (!file.mimetype.startsWith('image/')) {
+    // Some browsers send .heic with no type or as octet-stream; let those
+    // through and let toDecodableImage decide whether it is a real image.
+    const untyped = !file.mimetype || file.mimetype === 'application/octet-stream';
+    if (!file.mimetype.startsWith('image/') && !untyped) {
       return cb(new Error('Only image uploads are allowed'));
     }
     cb(null, true);
@@ -140,7 +144,19 @@ app.get('/api/entries', (req, res) => {
   res.json({ entries, count: entries.length, maxParticipantsExpected: MAX_PARTICIPANTS_EXPECTED });
 });
 
-app.post('/api/submit', upload.single('image'), async (req, res) => {
+// Wraps multer so size and type errors come back as JSON the upload page
+// can explain, instead of an HTML error page.
+function receiveImage(req, res, next) {
+  upload.single('image')(req, res, (err) => {
+    if (!err) return next();
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(413).json({ error: 'too_large', maxMb: MAX_UPLOAD_MB });
+    }
+    return res.status(415).json({ error: 'not_image' });
+  });
+}
+
+app.post('/api/submit', receiveImage, async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'image file is required' });
@@ -156,7 +172,16 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
     const region = VALID_REGIONS.has(requestedRegion) ? requestedRegion : '';
     const place = (req.body.place || '').toString().trim().slice(0, 60);
 
-    const pngBuffer = await processHandwriting(req.file.buffer, color);
+    let imageBuffer;
+    try {
+      // iPhone HEIC files sent from a computer need converting first.
+      imageBuffer = await toDecodableImage(req.file.buffer);
+    } catch (err) {
+      console.error('unreadable image:', err.message);
+      return res.status(422).json({ error: 'unreadable' });
+    }
+
+    const pngBuffer = await processHandwriting(imageBuffer, color);
 
     // Re-check: other uploads may have filled the last slots while this
     // image was processing.
