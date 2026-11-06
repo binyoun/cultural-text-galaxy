@@ -436,6 +436,8 @@ socket.on('newEntry', showNewEntryToast);
 socket.on('count', ({ count, maxParticipantsExpected: max }) => setCount(count, max));
 // Galaxy was cleared on the server; reload to drop every star in the scene.
 socket.on('reset', () => window.location.reload());
+// A removed star is rare, so rebuild the sky from the server's list.
+socket.on('removeEntry', () => window.location.reload());
 
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;

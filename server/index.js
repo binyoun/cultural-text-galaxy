@@ -74,6 +74,13 @@ function broadcastToTD(entry) {
   }
 }
 
+function broadcastRemoveToTD(id) {
+  const message = JSON.stringify({ type: 'removeEntry', id, count: entries.length, maxEntries: MAX_ENTRIES });
+  for (const ws of tdWss.clients) {
+    if (ws.readyState === WebSocket.OPEN) ws.send(message);
+  }
+}
+
 function broadcastResetToTD() {
   const message = JSON.stringify({ type: 'reset', count: 0, maxEntries: MAX_ENTRIES });
   for (const ws of tdWss.clients) {
@@ -117,6 +124,7 @@ const SHORT_LINKS = {
   '/guide': '/writing-guide.html#instructions',
   '/template': '/writing-guide.html#template',
   '/ink': '/ink.html',
+  '/admin': '/admin.html',
   '/starter': 'https://drive.google.com/drive/folders/1udeo0PnWwCmQ9vR3ww2siDUyJm2Hk_--?usp=sharing',
 };
 for (const [from, to] of Object.entries(SHORT_LINKS)) {
@@ -255,6 +263,38 @@ app.post('/api/reset', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'reset failed' });
+  }
+});
+
+// Removes one star, e.g. when a participant asks for theirs to be taken out
+// or an unsuitable photo arrives during the stream. Used by /admin.html.
+app.post('/api/entries/:id/remove', async (req, res) => {
+  const token = req.get('x-admin-token') || '';
+  if (!ADMIN_TOKEN || !safeEqual(token, ADMIN_TOKEN)) {
+    return res.status(403).json({ error: 'forbidden' });
+  }
+  const index = entries.findIndex((e) => e.id === req.params.id);
+  if (index === -1) {
+    return res.status(404).json({ error: 'not found' });
+  }
+  try {
+    const { id } = entries[index];
+    if (persistence.isConfigured) {
+      await persistence.deleteEntry(id);
+    } else {
+      const file = path.join(UPLOAD_DIR, `${id}.png`);
+      if (fs.existsSync(file)) fs.unlinkSync(file);
+    }
+    entries.splice(index, 1);
+
+    io.emit('removeEntry', { id });
+    io.emit('count', { count: entries.length, maxParticipantsExpected: MAX_PARTICIPANTS_EXPECTED });
+    broadcastRemoveToTD(id);
+
+    res.json({ ok: true, removed: id, count: entries.length });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'remove failed' });
   }
 });
 

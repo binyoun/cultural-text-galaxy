@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Galaxy Admin</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    body.mobile main { max-width: 640px; }
+    .admin-token { display: flex; gap: 8px; margin: 12px 0 20px; }
+    .admin-token input {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1px solid #3a3f6b;
+      border-radius: 8px;
+      background: #0a0c1e;
+      color: #eef0ff;
+      font-size: 14px;
+    }
+    .admin-token button, .star-row button {
+      padding: 10px 14px;
+      border: 1px solid #3a3f6b;
+      border-radius: 8px;
+      background: #0a0c1e;
+      color: #eef0ff;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .star-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px;
+      margin-bottom: 10px;
+      border: 1px solid #23264a;
+      border-radius: 12px;
+      background: #0a0c1e;
+    }
+    .star-row img {
+      width: 96px;
+      height: 96px;
+      object-fit: contain;
+      border-radius: 8px;
+      background: #1a1d36;
+      flex-shrink: 0;
+    }
+    .star-meta { flex: 1; font-size: 13px; color: #b9bfe6; line-height: 1.5; }
+    .star-meta strong { color: #eef0ff; }
+    .star-swatch {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+    .star-row button.confirm { border-color: #ff7a8a; color: #ff9eaa; }
+  </style>
+</head>
+<body class="mobile">
+  <main>
+    <h1>Galaxy admin</h1>
+    <p class="hint">Remove a single star from the shared galaxy. It disappears from /galaxy straight away and from Yi Kee's TouchDesigner on her next fetch. This cannot be undone.</p>
+
+    <div class="admin-token">
+      <input id="token" type="password" placeholder="Admin token" autocomplete="off" />
+      <button id="saveToken" type="button">Use token</button>
+    </div>
+
+    <p id="status"></p>
+    <p class="count">Stars in the galaxy: <span id="count">0</span></p>
+    <div id="list"></div>
+  </main>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

@@ -98,6 +98,13 @@ async function deleteAllEntries() {
   }
 }
 
+async function deleteEntry(id) {
+  const { error } = await client.from(TABLE).delete().eq('id', id);
+  if (error) throw error;
+  const { error: removeError } = await client.storage.from(BUCKET).remove([`${id}.png`]);
+  if (removeError) throw removeError;
+}
+
 module.exports = {
   get isConfigured() { return isConfigured; },
   get lastError() { return lastError; },
@@ -110,4 +117,5 @@ module.exports = {
   insertEntry,
   fetchAllEntries,
   deleteAllEntries,
+  deleteEntry,
 };
