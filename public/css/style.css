@@ -398,6 +398,83 @@ body.mobile h1 {
   color: #8fd6ff;
 }
 
+.behavior-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 4px;
+  border: 1px solid #3a3f6b;
+  border-radius: 8px;
+  background: #0a0c1e;
+  color: #eef0ff;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.behavior-btn small {
+  color: #9aa2d0;
+  font-size: 10px;
+  line-height: 1.25;
+}
+
+.behavior-btn:hover {
+  border-color: #6c7bff;
+}
+
+.behavior-btn.selected {
+  border-color: #6c7bff;
+  background: #1a1f4a;
+  color: #8fd6ff;
+}
+
+.behavior-demo {
+  position: relative;
+  display: block;
+  width: 48px;
+  height: 32px;
+  margin-bottom: 2px;
+}
+
+.behavior-demo i {
+  position: absolute;
+  top: 14px;
+  left: 22px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #e8c99d;
+}
+
+.behavior-demo i:nth-child(1) { --x: -16px; --y: -8px; }
+.behavior-demo i:nth-child(2) { --x: 14px; --y: -5px; animation-delay: -1s; }
+.behavior-demo i:nth-child(3) { --x: 3px; --y: 10px; animation-delay: -2s; }
+
+.demo-turbulence i { animation: demo-drift 3.2s ease-in-out infinite alternate; }
+.demo-attraction i { animation: demo-pull 3s ease-in-out infinite; animation-delay: 0s; }
+.demo-clustering i { animation: demo-cluster 3.6s ease-in-out infinite; animation-delay: 0s; }
+
+@keyframes demo-drift {
+  from { transform: translate(var(--x), var(--y)); }
+  50% { transform: translate(calc(var(--x) + 4px), calc(var(--y) - 4px)); }
+  to { transform: translate(calc(var(--x) - 3px), calc(var(--y) + 3px)); }
+}
+
+@keyframes demo-pull {
+  0%, 100% { transform: translate(var(--x), var(--y)); }
+  45% { transform: translate(calc(var(--x) * 0.15), calc(var(--y) * 0.15)); }
+  70% { transform: translate(calc(var(--x) * 0.7), calc(var(--y) * 0.7)); }
+}
+
+@keyframes demo-cluster {
+  0%, 100% { transform: translate(var(--x), var(--y)); opacity: 0.45; }
+  50% { transform: translate(calc(var(--x) * 0.3), calc(var(--y) * 0.3)); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .behavior-demo i { animation: none; transform: translate(var(--x), var(--y)); }
+}
+
 #submit-btn {
   width: 100%;
   padding: 14px;

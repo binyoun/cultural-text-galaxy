@@ -28,6 +28,20 @@ const countEl = document.getElementById('count');
 let selectedFile = null;
 let mediaStream = null;
 let selectedRegion = '';
+let selectedBehavior = '';
+
+const behaviorButtons = document.querySelectorAll('.behavior-btn');
+
+function setSelectedBehavior(behavior) {
+  selectedBehavior = behavior;
+  behaviorButtons.forEach((b) => b.classList.toggle('selected', b.dataset.behavior === behavior));
+}
+
+behaviorButtons.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    setSelectedBehavior(btn.classList.contains('selected') ? '' : btn.dataset.behavior);
+  });
+});
 
 function setSelectedRegion(region) {
   selectedRegion = region;
@@ -151,6 +165,7 @@ submitBtn.addEventListener('click', async () => {
   formData.append('intensity', intensityInput.value);
   formData.append('region', selectedRegion);
   formData.append('place', placeInput.value);
+  formData.append('behavior', selectedBehavior);
 
   try {
     const res = await fetch('/api/submit', { method: 'POST', body: formData });
@@ -184,6 +199,7 @@ function resetForm() {
   uploadInput.value = '';
   placeInput.value = '';
   setSelectedRegion('');
+  setSelectedBehavior('');
   submitBtn.disabled = true;
   showPreCapture();
 }

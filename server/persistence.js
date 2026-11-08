@@ -51,7 +51,7 @@ async function uploadImage(filename, buffer) {
 }
 
 async function insertEntry(entry) {
-  const { error } = await client.from(TABLE).insert({
+  const row = {
     id: entry.id,
     url: entry.url,
     color: entry.color,
@@ -59,8 +59,15 @@ async function insertEntry(entry) {
     intensity: entry.intensity,
     region: entry.region,
     place: entry.place,
+    behavior: entry.behavior,
     created_at: new Date(entry.createdAt).toISOString(),
-  });
+  };
+  let { error } = await client.from(TABLE).insert(row);
+  // A star must still land if the behavior column has not been added yet.
+  if (error && /behavior/i.test(error.message || '')) {
+    const { behavior, ...withoutBehavior } = row;
+    ({ error } = await client.from(TABLE).insert(withoutBehavior));
+  }
   if (error) throw error;
 }
 
@@ -79,6 +86,7 @@ async function fetchAllEntries() {
     intensity: row.intensity,
     region: row.region,
     place: row.place,
+    behavior: row.behavior || '',
     createdAt: new Date(row.created_at).getTime(),
   }));
 }

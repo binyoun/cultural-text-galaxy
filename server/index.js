@@ -19,6 +19,7 @@ const MAX_ENTRIES = parseInt(process.env.MAX_ENTRIES, 10) || 50;
 // Protects POST /api/reset. Unset = reset disabled.
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN || '';
 const VALID_REGIONS = new Set(['asia', 'middle-east', 'africa', 'europe', 'americas', 'oceania']);
+const VALID_BEHAVIORS = new Set(['turbulence', 'attraction', 'clustering']);
 
 fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
@@ -180,6 +181,8 @@ app.post('/api/submit', receiveImage, async (req, res) => {
     const requestedRegion = (req.body.region || '').toString().trim().toLowerCase();
     const region = VALID_REGIONS.has(requestedRegion) ? requestedRegion : '';
     const place = (req.body.place || '').toString().trim().slice(0, 60);
+    const requestedBehavior = (req.body.behavior || '').toString().trim().toLowerCase();
+    const behavior = VALID_BEHAVIORS.has(requestedBehavior) ? requestedBehavior : '';
 
     let imageBuffer;
     try {
@@ -217,6 +220,7 @@ app.post('/api/submit', receiveImage, async (req, res) => {
       intensity,
       region,
       place,
+      behavior,
       createdAt: Date.now(),
     };
 
