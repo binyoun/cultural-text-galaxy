@@ -3,6 +3,8 @@
 **Live site: https://cultural-text-galaxy.onrender.com** (this is the link
 to share, not the github.com repo page, which only shows code)
 
+Workshop record, 9 November 2026: [docs/workshop-2026-11-09.md](docs/workshop-2026-11-09.md)
+
 Participatory installation: ~20 participants photograph handwritten words in
 their own script, tint and glow them, and watch them spiral into a shared 3D
 vortex. Runs two ways:
