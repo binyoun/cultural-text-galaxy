@@ -121,7 +121,7 @@ const entries = [];
 // Short links for the workshop slides and QR codes.
 const SHORT_LINKS = {
   '/up': '/mobile.html',
-  '/galaxy': '/display.html',
+  '/galaxy': '/sky.html',
   '/guide': '/writing-guide.html#instructions',
   '/template': '/writing-guide.html#template',
   '/ink': '/ink.html',
